@@ -8,38 +8,34 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.apache.commons.io.IOUtils;
+import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
 
 public class MainActivity extends AppCompatActivity {
 
     private static TextView statusSubtitle, status;
     private static ProgressBar progressBar;
-    private static boolean connected = false;
-    public static Context ctx;
     private static WSServer server;
-    private static Activity a;
+    private static Activity activity;
 
-    private void registerViews(){
+    private static boolean connected = false;
+
+    private void registerViews() {
         statusSubtitle = (TextView) findViewById(R.id.statusSubtitle);
         status = (TextView) findViewById(R.id.status);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
-    private void setupViews(){
+    private void setupViews() {
         progressBar.setVisibility(View.VISIBLE);
         statusSubtitle.setText("just a second");
         status.setText("please wait");
@@ -49,17 +45,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ctx = getApplicationContext();
+        activity = this;
 
         registerViews();
         setupViews();
 
-        wifiUpdate();
+        TitanCastNotification.setActivity(activity);
 
-        Details.setContext(this);
-        a = this;
+        checkWifiStatus();
 
-        server = new WSServer(new InetSocketAddress(25517), ctx);
+        server = new WSServer(new InetSocketAddress(25517), getApplicationContext());
         server.start();
 
         checkForUpdate(false);
@@ -76,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.check_update) {
             checkForUpdate(true);
             return true;
@@ -94,27 +88,27 @@ public class MainActivity extends AppCompatActivity {
 
         connected = (state == 2);
         status.setTypeface(Typeface.DEFAULT);
+        setProgressHidden(true);
 
-        if(state == 2){
+        if (state == 2) {
             statusSubtitle.setText("connect to");
-            status.setText( FormattingTools.getIP(ip) );
-            setProgressHidden(true);
-
+            status.setText(FormattingTools.getIP(ip));
             status.setTypeface(Typeface.MONOSPACE);
 
-        }else if(state == 1){
+        } else if (state == 1) {
             statusSubtitle.setText("nearly done");
             status.setText("connecting");
             setProgressHidden(false);
-        }else{
+        } else {
             statusSubtitle.setText("uh-oh");
             status.setText("connect to wi-fi");
-            setProgressHidden(true);
         }
 
     }
 
-    public static void wifiUpdate(){
+    public static void checkWifiStatus() {
+
+        Context ctx = activity.getApplicationContext();
 
         ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -126,30 +120,24 @@ public class MainActivity extends AppCompatActivity {
             int ip = wm.getConnectionInfo().getIpAddress();
             wifiStateChanged(2, ip);
 
-        }else if(ni.isConnectedOrConnecting()){
+        } else if (ni.isConnectedOrConnecting()) {
             wifiStateChanged(1, -1);
-        }else{
+        } else {
             wifiStateChanged(0, -1);
         }
 
     }
 
-    private static void setProgressHidden(boolean hidden){
-        if(hidden)
-            progressBar.setVisibility(View.INVISIBLE);
-        else
-            progressBar.setVisibility(View.VISIBLE);
+    private static void setProgressHidden(boolean hidden) {
+        progressBar.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
     }
 
-    public static WSServer getServer(){
+    public static WSServer getServer() {
         return server;
     }
 
-    public static void checkForUpdate(boolean override){
-        if(override){
-            Details.shownUpdate = false;
-        }
-        new Thread(new CheckUpdate(a, override)).start();
+    public static void checkForUpdate(boolean override) {
+        new Thread(new CheckUpdate(override)).start();
     }
 
 }
