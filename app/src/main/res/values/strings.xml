@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Titan Cast</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_request_connect_screen">RequestConnectScreen</string>
+    <string name="title_activity_cast_view">CastView</string>
+
+    <string name="title_activity_cast_web_view">CastWebView</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_cast">CastActivity</string>
+</resources>
