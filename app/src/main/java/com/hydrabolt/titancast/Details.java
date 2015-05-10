@@ -16,9 +16,16 @@ import com.hydrabolt.titancast.info_display.TitanCastNotification;
 public class Details {
 
     private static final String APP_VERSION = "0.0.1";
-    private static boolean connected = false, haveViewData = false;
+    private static boolean connected = false, hasViewData = false;
     private static Activity activity;
     private static boolean shownUpdate = false;
+
+    public static boolean hasViewData() {
+        return hasViewData;
+    }
+    public static void setHasViewData(boolean a){
+        hasViewData = a;
+    }
 
     public static String getAppVersion(){
         return APP_VERSION;
@@ -63,4 +70,10 @@ public class Details {
         TitanCastNotification.showToast("Update available - check notification drawer", Toast.LENGTH_LONG);
     }
 
+    public static void setConnected(boolean connected) {
+        Details.connected = connected;
+    }
+    public static boolean connected(){
+        return connected;
+    }
 }

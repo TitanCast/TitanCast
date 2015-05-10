@@ -29,6 +29,58 @@ public class MainActivity extends AppCompatActivity {
 
     private static boolean connected = false;
 
+    public static void wifiStateChanged(int state, int ip) {
+        connected = (state == 2);
+        status.setTypeface(Typeface.DEFAULT);
+        setProgressHidden(true);
+
+        if (state == 2) {
+            statusSubtitle.setText("connect to");
+            status.setText(FormattingTools.getIP(ip));
+            status.setTypeface(Typeface.MONOSPACE);
+
+        } else if (state == 1) {
+            statusSubtitle.setText("nearly done");
+            status.setText("connecting");
+            setProgressHidden(false);
+        } else {
+            statusSubtitle.setText("uh-oh");
+            status.setText("connect to wi-fi");
+        }
+    }
+
+    public static void checkWifiStatus() {
+        Context ctx = activity.getApplicationContext();
+
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        WifiManager wm = (WifiManager) ctx.getSystemService(WIFI_SERVICE);
+
+        if (ni.isConnected()) {
+
+            int ip = wm.getConnectionInfo().getIpAddress();
+            wifiStateChanged(2, ip);
+
+        } else if (ni.isConnectedOrConnecting()) {
+            wifiStateChanged(1, -1);
+        } else {
+            wifiStateChanged(0, -1);
+        }
+    }
+
+    private static void setProgressHidden(boolean hidden) {
+        progressBar.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    public static WSServer getServer() {
+        return server;
+    }
+
+    public static void checkForUpdate(boolean override) {
+        new Thread(new CheckUpdate(override)).start();
+    }
+
     private void registerViews() {
         statusSubtitle = (TextView) findViewById(R.id.statusSubtitle);
         status = (TextView) findViewById(R.id.status);
@@ -60,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         checkForUpdate(false);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -82,62 +133,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public static void wifiStateChanged(int state, int ip) {
-
-        connected = (state == 2);
-        status.setTypeface(Typeface.DEFAULT);
-        setProgressHidden(true);
-
-        if (state == 2) {
-            statusSubtitle.setText("connect to");
-            status.setText(FormattingTools.getIP(ip));
-            status.setTypeface(Typeface.MONOSPACE);
-
-        } else if (state == 1) {
-            statusSubtitle.setText("nearly done");
-            status.setText("connecting");
-            setProgressHidden(false);
-        } else {
-            statusSubtitle.setText("uh-oh");
-            status.setText("connect to wi-fi");
-        }
-
-    }
-
-    public static void checkWifiStatus() {
-
-        Context ctx = activity.getApplicationContext();
-
-        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        WifiManager wm = (WifiManager) ctx.getSystemService(WIFI_SERVICE);
-
-        if (ni.isConnected()) {
-
-            int ip = wm.getConnectionInfo().getIpAddress();
-            wifiStateChanged(2, ip);
-
-        } else if (ni.isConnectedOrConnecting()) {
-            wifiStateChanged(1, -1);
-        } else {
-            wifiStateChanged(0, -1);
-        }
-
-    }
-
-    private static void setProgressHidden(boolean hidden) {
-        progressBar.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
-    }
-
-    public static WSServer getServer() {
-        return server;
-    }
-
-    public static void checkForUpdate(boolean override) {
-        new Thread(new CheckUpdate(override)).start();
     }
 
 }
