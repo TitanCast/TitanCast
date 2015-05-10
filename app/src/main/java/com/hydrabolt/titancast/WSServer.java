@@ -41,7 +41,7 @@ public class WSServer extends WebSocketServer {
         deviceDetailsRaw.add("device_model=" + Build.MODEL);
         deviceDetailsRaw.add("device_manufacturer=" + Build.MANUFACTURER);
         deviceDetailsRaw.add("device_android_version=" + Build.VERSION.SDK_INT);
-        deviceDetailsRaw.add("titan_cast_version=" + Details.APP_VERSION);
+        deviceDetailsRaw.add("titan_cast_version=" + Details.getAppVersion());
         deviceDetailsRaw.add("has_vibrator=" + ((Vibrator) c.getSystemService(c.VIBRATOR_SERVICE)).hasVibrator());
 
         SensorManager sm = (SensorManager) c.getSystemService(Context.SENSOR_SERVICE);
