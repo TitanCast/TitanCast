@@ -5,7 +5,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.hydrabolt.titancast.RequestConnectScreen"
-    android:padding="0dp">
+    android:padding="0dp"
+    android:background="#072530">
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,7 +36,8 @@
         android:layout_marginLeft="8dp"
         android:layout_above="@+id/linearLayout"
         android:layout_alignParentEnd="true"
-        android:textSize="15dp"/>
+        android:textSize="15dp"
+        android:scrollbars="vertical"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -45,8 +47,8 @@
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:background="#1C1C1C"
-        android:padding="8dp" />
+        android:background="#0C3747"
+        android:padding="8dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -66,7 +68,8 @@
             android:layout_alignParentStart="true"
             android:layout_weight=".5"
             android:textSize="18dp"
-            android:onClick="acceptClicked"/>
+            android:onClick="acceptClicked"
+            android:background="#0C3747"/>
 
         <Button
             android:layout_width="0dip"
@@ -78,6 +81,7 @@
             android:layout_weight=".5"
             android:textSize="18dp"
             android:onClick="ignoreClicked"
+            android:background="#0C3747"
             />
     </LinearLayout>
 

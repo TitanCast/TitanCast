@@ -53,4 +53,9 @@ public class PacketSerializer {
         return toReturn;
     }
 
+    public static String generatePacket(String type, String data) {
+
+        return generatePacket( type, new String[] { data } );
+
+    }
 }

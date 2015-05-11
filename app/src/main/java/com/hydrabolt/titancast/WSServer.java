@@ -73,31 +73,23 @@ public class WSServer extends WebSocketServer {
     }
 
     public static void terminateActive() {
-        socketList.remove(acceptedWebSocket);
         acceptedWebSocket.close(0);
         acceptedWebSocket = null;
         Details.setConnected(false);
         Details.setHasViewData(false);
     }
 
-    public static void sendToActive(String data) {
+    public static void sendCustomDataToActive(String data) {
 
-        if (acceptedWebSocket == null || !Details.connected()) {
-            return;
-        }
-
-        String[] dat = {
-                data
-        };
-        try {
-            acceptedWebSocket.send(PacketSerializer.generatePacket("custom_data", dat));
-        } catch (UnknownError err) {
-
+        if (acceptedWebSocket != null && Details.connected() && Details.hasViewData()) {
+            sendPacketToActive( PacketSerializer.generatePacket("custom_data", data) );
         }
     }
 
     public static void sendPacketToActive(String data) {
-        acceptedWebSocket.send(data);
+        if (acceptedWebSocket != null && Details.connected()) {
+            acceptedWebSocket.send(data);
+        }
     }
 
     @Override
@@ -131,59 +123,64 @@ public class WSServer extends WebSocketServer {
         switch (type) {
 
             case "request_connect":
-                if (msg.size() != 3) return;
 
-                if (conn) {
-                    webSocket.send(PacketSerializer.generatePacket("already_connected", empty));
-                } else {
-                    Intent intent = new Intent(context, RequestConnectScreen.class);
-                    intent.putExtra("app_name", msg.get(1));
-                    intent.putExtra("app_desc", msg.get(2));
-                    intent.putExtra("client_id", socketList.indexOf(webSocket));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
+                if (msg.size() == 3) {
+                    if (conn) {
+                        webSocket.send(PacketSerializer.generatePacket("already_connected", empty));
+                    } else {
+                        Intent intent = new Intent(context, RequestConnectScreen.class);
+                        intent.putExtra("app_name", msg.get(1));
+                        intent.putExtra("app_desc", msg.get(2));
+                        intent.putExtra("client_id", socketList.indexOf(webSocket));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
                 }
                 break;
 
             case "cast_view_data":
 
-                if (Details.hasViewData() || msg.size() != 2) return;
+                if (!Details.hasViewData() && msg.size() == 2) {
+                    String url = msg.get(1);
+                    Intent intent = new Intent(context, CastActivity.class);
+                    intent.putExtra("url", msg.get(1));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                String url = msg.get(1);
-                Intent intent = new Intent(context, CastActivity.class);
-                intent.putExtra("url", msg.get(1));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                    Details.setHasViewData(true);
+                    Details.setConnected(true);
 
+                    context.startActivity(intent);
+                }
                 break;
 
             case "custom_data":
-                if (msg.size() != 2) return;
+                if (msg.size() == 2) {
+                    final String toSend = msg.get(1);
+                    CastActivity.h.post(new Runnable() {
 
-                final ArrayList<String> lmsg = msg;
-
-                CastActivity.h.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        CastActivity.sendCustom(lmsg.get(1));
-                    }
-                });
+                        @Override
+                        public void run() {
+                            CastActivity.sendCustom(toSend);
+                        }
+                    });
+                }
                 break;
             case "enable_accelerometer":
 
                 if (connectedAndInView) {
                     CastActivity.getSensorManager().enableAccelerometerSensor();
                 }
-
                 break;
+
             case "disable_accelerometer":
 
                 if (connectedAndInView) {
                     CastActivity.getSensorManager().disableAccelerometerSensor();
                 }
                 break;
+
             case "set_accelerometer_speed":
+
                 if (connectedAndInView && msg.size() == 2) {
                     int speed = SensorManager.SENSOR_DELAY_NORMAL;
 
@@ -194,12 +191,16 @@ public class WSServer extends WebSocketServer {
                     CastActivity.getSensorManager().setDelay(speed);
                 }
                 break;
+
             case "set_accelerometer_cap":
+
                 if (connectedAndInView && msg.size() == 2) {
                     CastActivity.getSensorManager().setAccelerometerCap(Integer.parseInt(msg.get(1)));
                 }
+
                 break;
             default:
+
                 webSocket.send(PacketSerializer.generatePacket("unknown_command", empty));
                 break;
 

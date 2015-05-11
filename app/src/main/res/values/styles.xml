@@ -19,6 +19,11 @@
         <item name="colorPrimaryDark">#1093C7</item>
     </style>
 
+    <style name="PermissionTheme" parent="MyCustomTheme">
+        <item name="colorPrimary">#0C3747</item>
+        <item name="colorPrimaryDark">#0C3747</item>
+    </style>
+
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>

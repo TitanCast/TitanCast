@@ -24,7 +24,7 @@ public class JSBridge{
 
     @JavascriptInterface
     public void sendData(String data){
-        WSServer.sendToActive(Base64.encodeToString(data.getBytes(), Base64.DEFAULT));
+        WSServer.sendCustomDataToActive(Base64.encodeToString(data.getBytes(), Base64.DEFAULT));
     }
 
     @JavascriptInterface
