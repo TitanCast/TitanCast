@@ -6,6 +6,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Vibrator;
+import android.widget.Toast;
+
+import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -62,14 +65,23 @@ public class WSServer extends WebSocketServer {
     }
 
     public static void rejectRequest(int index) {
-        socketList.get(index).send(PacketSerializer.generatePacket("reject_connect_request", empty));
-        socketList.get(index).close(0);
+        try {
+            socketList.get(index).send(PacketSerializer.generatePacket("reject_connect_request", empty));
+            socketList.get(index).close(0);
+        }catch(IndexOutOfBoundsException e){
+            TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
+        }
     }
 
     public static void acceptRequest(int index) {
-        socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
-        Details.setConnected(true);
-        acceptedWebSocket = socketList.get(index);
+
+        try {
+            socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
+            Details.setConnected(true);
+            acceptedWebSocket = socketList.get(index);
+        }catch(IndexOutOfBoundsException e){
+            TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
+        }
     }
 
     public static void terminateActive() {
@@ -124,7 +136,7 @@ public class WSServer extends WebSocketServer {
 
             case "request_connect":
 
-                if (msg.size() == 3) {
+                if (msg.size() == 4) {
                     if (conn) {
                         webSocket.send(PacketSerializer.generatePacket("already_connected", empty));
                     } else {
@@ -132,6 +144,7 @@ public class WSServer extends WebSocketServer {
                         intent.putExtra("app_name", msg.get(1));
                         intent.putExtra("app_desc", msg.get(2));
                         intent.putExtra("client_id", socketList.indexOf(webSocket));
+                        intent.putExtra("app_icon", msg.get(3));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }

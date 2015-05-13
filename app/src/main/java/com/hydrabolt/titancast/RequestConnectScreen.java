@@ -1,12 +1,18 @@
 package com.hydrabolt.titancast;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 
 public class RequestConnectScreen extends AppCompatActivity {
@@ -30,6 +36,17 @@ public class RequestConnectScreen extends AppCompatActivity {
         Intent i = getIntent();
         String appName = i.getStringExtra("app_name");
         String appDesc = i.getStringExtra("app_desc");
+        String appIcon = i.getStringExtra("app_icon");
+
+        String imageDataBytes = appIcon.substring(appIcon.indexOf(",") + 1);
+
+        InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
+
+        ImageView cimg = (ImageView)findViewById(R.id.appIcon);
+        cimg.setImageBitmap( BitmapFactory.decodeStream(stream) );
+        cimg.setMaxWidth(32);
+        cimg.setMaxHeight(32);
+
         index = i.getIntExtra("client_id", 0);
 
         this.appName.setText(appName);

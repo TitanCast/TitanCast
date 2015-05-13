@@ -12,12 +12,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MyCustomTheme" >
-        <receiver android:name=".WFStatusReceiver" >
-            <intent-filter android:priority="100" >
-                <action android:name="android.net.wifi.STATE_CHANGE" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >

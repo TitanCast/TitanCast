@@ -3,6 +3,7 @@ package com.hydrabolt.titancast;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,8 +13,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
@@ -22,27 +21,21 @@ import java.net.InetSocketAddress;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static Activity activity;
     private static TextView statusSubtitle, status;
-    private static ProgressBar progressBar;
     private static WSServer server;
-    private static Activity activity;
-
     private static boolean connected = false;
 
     public static void wifiStateChanged(int state, int ip) {
+
         connected = (state == 2);
         status.setTypeface(Typeface.DEFAULT);
-        setProgressHidden(true);
 
         if (state == 2) {
             statusSubtitle.setText("connect to");
             status.setText(FormattingTools.getIP(ip));
             status.setTypeface(Typeface.MONOSPACE);
 
-        } else if (state == 1) {
-            statusSubtitle.setText("nearly done");
-            status.setText("connecting");
-            setProgressHidden(false);
         } else {
             statusSubtitle.setText("uh-oh");
             status.setText("connect to wi-fi");
@@ -62,15 +55,9 @@ public class MainActivity extends AppCompatActivity {
             int ip = wm.getConnectionInfo().getIpAddress();
             wifiStateChanged(2, ip);
 
-        } else if (ni.isConnectedOrConnecting()) {
-            wifiStateChanged(1, -1);
         } else {
             wifiStateChanged(0, -1);
         }
-    }
-
-    private static void setProgressHidden(boolean hidden) {
-        progressBar.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
     }
 
     public static WSServer getServer() {
@@ -84,11 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private void registerViews() {
         statusSubtitle = (TextView) findViewById(R.id.statusSubtitle);
         status = (TextView) findViewById(R.id.status);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     private void setupViews() {
-        progressBar.setVisibility(View.VISIBLE);
         statusSubtitle.setText("just a second");
         status.setText("please wait");
     }
@@ -108,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
 
         server = new WSServer(new InetSocketAddress(25517), getApplicationContext());
         server.start();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        intentFilter.setPriority(100);
+
+        registerReceiver(new WFStatusReceiver(), intentFilter);
 
         checkForUpdate(false);
     }

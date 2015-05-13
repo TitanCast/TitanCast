@@ -8,81 +8,94 @@
     android:padding="0dp"
     android:background="#072530">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="APP NAME"
-        android:id="@+id/appName"
-        android:textSize="24dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        android:padding="7dp"
-        android:paddingLeft="0dp"
-        android:layout_marginLeft="8dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="APP DESCRIPTION"
-        android:id="@+id/appDesc"
-        android:layout_below="@+id/appName"
-        android:layout_alignParentStart="true"
-        android:maxLength="256"
-        android:padding="7dp"
-        android:layout_marginLeft="8dp"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentEnd="true"
-        android:textSize="15dp"
-        android:scrollbars="vertical"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="The following application would like permission to cast:"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:background="#0C3747"
-        android:padding="8dp"/>
-
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/textView"
-        android:id="@+id/linearLayout">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignEnd="@+id/appName"
+        android:padding="8dp">
 
-        <Button
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:text="ACCEPT"
-            android:id="@+id/acceptButton"
-            android:layout_alignParentBottom="true"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:maxWidth="48dp"
+                android:maxHeight="48dp"
+                android:id="@+id/appIcon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="APP NAME"
+                android:id="@+id/appName"
+                android:textSize="18dp"
+                android:padding="7dp"
+                android:paddingLeft="0dp"
+                android:layout_marginLeft="8dp"
+                android:layout_below="@+id/textView"
+                android:layout_centerHorizontal="true"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="APP DESCRIPTION"
+            android:id="@+id/appDesc"
+            android:layout_below="@+id/appName"
             android:layout_alignParentStart="true"
-            android:layout_weight=".5"
-            android:textSize="18dp"
-            android:onClick="acceptClicked"
-            android:background="#0C3747"/>
-
-        <Button
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:text="IGNORE"
-            android:id="@+id/ignoreButton"
-            android:layout_alignTop="@+id/acceptButton"
+            android:maxLength="256"
+            android:padding="0dp"
+            android:layout_marginLeft="0dp"
             android:layout_alignParentEnd="true"
-            android:layout_weight=".5"
-            android:textSize="18dp"
-            android:onClick="ignoreClicked"
-            android:background="#0C3747"
-            />
+            android:textSize="15dp"
+            android:scrollbars="vertical"
+            android:paddingTop="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_above="@+id/buttons"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:weightSum="2"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/appDesc"
+            android:id="@+id/buttons">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="ACCEPT"
+                android:id="@+id/acceptButton"
+                android:layout_weight="1"
+                android:background="#1D5A70"
+                android:onClick="acceptClicked"
+                android:layout_marginRight="1dp"
+                android:padding="4dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="IGNORE"
+                android:id="@+id/ignoreButton"
+                android:layout_weight="1"
+                android:background="#1D5A70"
+                android:onClick="ignoreClicked"
+                android:layout_marginLeft="1dp"
+                android:padding="4dp"
+                android:layout_gravity="right" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
