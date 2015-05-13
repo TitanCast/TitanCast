@@ -181,7 +181,7 @@ public class WSServer extends WebSocketServer {
             case "enable_accelerometer":
 
                 if (connectedAndInView) {
-                    CastActivity.getSensorManager().enableAccelerometerSensor();
+                    CastActivity.getSensorManager().enableAccelerometerSensor("enable_accelerometer");
                 }
                 break;
 
