@@ -10,6 +10,8 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.hydrabolt.titancast.info_display.TitanCastNotification;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -21,11 +23,9 @@ import java.net.URL;
  */
 public class CheckUpdate implements Runnable {
 
-    Activity a;
     boolean override = false;
 
-    public CheckUpdate(Activity a, boolean override){
-        this.a = a;
+    public CheckUpdate(boolean override) {
         this.override = override;
     }
 
@@ -33,7 +33,7 @@ public class CheckUpdate implements Runnable {
     @Override
     public void run() {
 
-        String myVersion = Details.APP_VERSION;
+        String myVersion = Details.getAppVersion();
 
         try {
 
@@ -42,38 +42,37 @@ public class CheckUpdate implements Runnable {
             try {
                 String lines[] = IOUtils.toString(in).split("\\r?\\n");
 
-                for(String line : lines){
+                for (String line : lines) {
 
-                    if(!line.startsWith("#")){
+                    if (!line.startsWith("#")) {
                         String[] details = line.split("=");
 
-                        if(!details[0].equals(myVersion)){
-                            Details.showUpdate(details[0]);
-                        }else{
-                            if(override) {
-                                a.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(a.getApplicationContext(), "No updates found", Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                        if (!details[0].equals(myVersion)) {
+                            //there is a new version available
+                            Details.showUpdate(details[0], override);
+                        } else {
+                            //not a new version
+                            if (override) {
+                                //only notify the user that no updates were found if they manually requested for an update check
+                                TitanCastNotification.showToast("No updates found", Toast.LENGTH_LONG);
                             }
                             return;
-
                         }
                     }
 
                 }
 
-            } catch (Exception e){
-
+            } catch (Exception e) {
+                if (override) {
+                    TitanCastNotification.showToast("Error fetching update list", Toast.LENGTH_LONG);
+                }
             } finally {
                 IOUtils.closeQuietly(in);
             }
 
         } catch (IOException e) {
             //nope
-            Log.d("a", e.getLocalizedMessage());
+            TitanCastNotification.showToast("Error fetching update list", Toast.LENGTH_LONG);
         }
 
     }

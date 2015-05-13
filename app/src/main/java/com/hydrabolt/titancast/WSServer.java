@@ -2,13 +2,13 @@ package com.hydrabolt.titancast;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Vibrator;
-import android.util.Log;
+import android.widget.Toast;
+
+import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -23,25 +23,25 @@ import java.util.ArrayList;
 public class WSServer extends WebSocketServer {
 
     private static Context context;
-    private static ArrayList < WebSocket > socketList;
+    private static ArrayList<WebSocket> socketList;
     private static String[] empty = {};
     private static String deviceDetails;
-    private static ArrayList < String > deviceDetailsRaw;
+    private static ArrayList<String> deviceDetailsRaw;
 
     private static WebSocket acceptedWebSocket;
 
     public WSServer(InetSocketAddress address, Context c) {
         super(address);
 
-        socketList = new ArrayList < WebSocket > ();
+        socketList = new ArrayList<WebSocket>();
 
         context = c;
 
-        deviceDetailsRaw = new ArrayList < String > ();
+        deviceDetailsRaw = new ArrayList<String>();
         deviceDetailsRaw.add("device_model=" + Build.MODEL);
         deviceDetailsRaw.add("device_manufacturer=" + Build.MANUFACTURER);
         deviceDetailsRaw.add("device_android_version=" + Build.VERSION.SDK_INT);
-        deviceDetailsRaw.add("titan_cast_version=" + Details.APP_VERSION);
+        deviceDetailsRaw.add("titan_cast_version=" + Details.getAppVersion());
         deviceDetailsRaw.add("has_vibrator=" + ((Vibrator) c.getSystemService(c.VIBRATOR_SERVICE)).hasVibrator());
 
         SensorManager sm = (SensorManager) c.getSystemService(Context.SENSOR_SERVICE);
@@ -62,6 +62,46 @@ public class WSServer extends WebSocketServer {
         deviceDetailsRaw.add("has_step_detector=" + (sm.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null));
 
         deviceDetails = PacketSerializer.generatePacket("device_details", deviceDetailsRaw);
+    }
+
+    public static void rejectRequest(int index) {
+        try {
+            socketList.get(index).send(PacketSerializer.generatePacket("reject_connect_request", empty));
+            socketList.get(index).close(0);
+        }catch(IndexOutOfBoundsException e){
+            TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
+        }
+    }
+
+    public static void acceptRequest(int index) {
+
+        try {
+            socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
+            Details.setConnected(true);
+            acceptedWebSocket = socketList.get(index);
+        }catch(IndexOutOfBoundsException e){
+            TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
+        }
+    }
+
+    public static void terminateActive() {
+        acceptedWebSocket.close(0);
+        acceptedWebSocket = null;
+        Details.setConnected(false);
+        Details.setHasViewData(false);
+    }
+
+    public static void sendCustomDataToActive(String data) {
+
+        if (acceptedWebSocket != null && Details.connected() && Details.hasViewData()) {
+            sendPacketToActive( PacketSerializer.generatePacket("custom_data", data) );
+        }
+    }
+
+    public static void sendPacketToActive(String data) {
+        if (acceptedWebSocket != null && Details.connected()) {
+            acceptedWebSocket.send(data);
+        }
     }
 
     @Override
@@ -87,86 +127,94 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket webSocket, String s) {
 
-        ArrayList < String > msg = PacketSerializer.parsePacket(s);
+        ArrayList<String> msg = PacketSerializer.parsePacket(s);
         String type = msg.get(0);
         boolean conn = acceptedWebSocket == webSocket;
+        boolean connectedAndInView = Details.hasViewData() && conn;
 
-        Log.d("MOOO", Integer.toString(msg.size()));
-        Log.d("MOOO", msg.get(0));
-
-        switch(type){
+        switch (type) {
 
             case "request_connect":
-                if(msg.size() != 3) return;
 
-                if(conn){
-                    webSocket.send(PacketSerializer.generatePacket("already_connected", empty));
-                }else{
-                    Intent intent = new Intent(context, RequestConnectScreen.class);
-                    intent.putExtra("app_name", msg.get(1));
-                    intent.putExtra("app_desc", msg.get(2));
-                    intent.putExtra("client_id", socketList.indexOf(webSocket));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
+                if (msg.size() == 4) {
+                    if (conn) {
+                        webSocket.send(PacketSerializer.generatePacket("already_connected", empty));
+                    } else {
+                        Intent intent = new Intent(context, RequestConnectScreen.class);
+                        intent.putExtra("app_name", msg.get(1));
+                        intent.putExtra("app_desc", msg.get(2));
+                        intent.putExtra("client_id", socketList.indexOf(webSocket));
+                        intent.putExtra("app_icon", msg.get(3));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
                 }
                 break;
 
             case "cast_view_data":
 
-                if(Details.haveViewData || msg.size() != 2) return;
+                if (!Details.hasViewData() && msg.size() == 2) {
+                    String url = msg.get(1);
+                    Intent intent = new Intent(context, CastActivity.class);
+                    intent.putExtra("url", msg.get(1));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                String url = msg.get(1);
-                Intent intent = new Intent(context, CastActivity.class);
-                intent.putExtra("url", msg.get(1));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                    Details.setHasViewData(true);
+                    Details.setConnected(true);
 
+                    context.startActivity(intent);
+                }
                 break;
 
             case "custom_data":
-                if (msg.size() != 2) return;
+                if (msg.size() == 2) {
+                    final String toSend = msg.get(1);
+                    CastActivity.h.post(new Runnable() {
 
-                final ArrayList < String > lmsg = msg;
-
-                CastActivity.h.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        CastActivity.sendCustom(lmsg.get(1));
-                    }
-                });
+                        @Override
+                        public void run() {
+                            CastActivity.sendCustom(toSend);
+                        }
+                    });
+                }
                 break;
             case "enable_accelerometer":
 
-                if(Details.haveViewData){
+                if (connectedAndInView) {
                     CastActivity.getSensorManager().enableAccelerometerSensor();
                 }
-
                 break;
+
             case "disable_accelerometer":
 
-                if(Details.haveViewData){
+                if (connectedAndInView) {
                     CastActivity.getSensorManager().disableAccelerometerSensor();
                 }
                 break;
+
             case "set_accelerometer_speed":
-                if(Details.haveViewData && msg.size() == 2){
+
+                if (connectedAndInView && msg.size() == 2) {
                     int speed = SensorManager.SENSOR_DELAY_NORMAL;
 
-                    if(msg.get(1).equals("game")) speed = SensorManager.SENSOR_DELAY_GAME;
-                    if(msg.get(1).equals("fastest")) speed = SensorManager.SENSOR_DELAY_FASTEST;
-                    if(msg.get(1).equals("ui")) speed = SensorManager.SENSOR_DELAY_UI;
+                    if (msg.get(1).equals("game")) speed = SensorManager.SENSOR_DELAY_GAME;
+                    if (msg.get(1).equals("fastest")) speed = SensorManager.SENSOR_DELAY_FASTEST;
+                    if (msg.get(1).equals("ui")) speed = SensorManager.SENSOR_DELAY_UI;
 
                     CastActivity.getSensorManager().setDelay(speed);
                 }
                 break;
+
             case "set_accelerometer_cap":
-                if(Details.haveViewData && msg.size() == 2){
+
+                if (connectedAndInView && msg.size() == 2) {
                     CastActivity.getSensorManager().setAccelerometerCap(Integer.parseInt(msg.get(1)));
                 }
+
                 break;
             default:
-                webSocket.send( PacketSerializer.generatePacket("unknown_command", empty) );
+
+                webSocket.send(PacketSerializer.generatePacket("unknown_command", empty));
                 break;
 
         }
@@ -176,44 +224,5 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onError(WebSocket webSocket, Exception e) {
 
-    }
-
-    public static void rejectRequest(int index) {
-        socketList.get(index).send(PacketSerializer.generatePacket("reject_connect_request", empty));
-        socketList.get(index).close(0);
-    }
-
-    public static void acceptRequest(int index) {
-        socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
-        Details.connected = true;
-        acceptedWebSocket = socketList.get(index);
-    }
-
-    public static void terminateActive() {
-        socketList.remove(acceptedWebSocket);
-        acceptedWebSocket.close(0);
-        acceptedWebSocket = null;
-        Details.connected = false;
-        Details.haveViewData = false;
-    }
-
-    public static void sendToActive(String data) {
-
-        if(acceptedWebSocket == null || !Details.connected){
-            return;
-        }
-
-        String[] dat = {
-                data
-        };
-        try {
-            acceptedWebSocket.send(PacketSerializer.generatePacket("custom_data", dat));
-        }catch(UnknownError err){
-
-        }
-    }
-
-    public static void sendPacketToActive(String data) {
-        acceptedWebSocket.send(data);
     }
 }

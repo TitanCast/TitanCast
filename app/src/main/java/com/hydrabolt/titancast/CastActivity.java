@@ -36,6 +36,11 @@ public class CastActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if(!Details.connected()){
+            finish();
+        }
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_cast);
@@ -43,9 +48,6 @@ public class CastActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         h = new Handler();
-
-        Details.haveViewData = true;
-        Details.connected = true;
 
         Intent i = getIntent();
         String url = i.getStringExtra("url");
@@ -66,7 +68,7 @@ public class CastActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        super.onStop();
+        super.onBackPressed();
         MainActivity.getServer().terminateActive();
         finish();
     }

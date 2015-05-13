@@ -55,8 +55,9 @@ public class TCSensorManager {
         }
 
         public static void registerAll(){
-            if(accelerometerSensorEnabled == 2)
+            if(accelerometerSensorEnabled == 2) {
                 enableAccelerometerSensor();
+            }
         }
 
     //ACCELEROMETER
