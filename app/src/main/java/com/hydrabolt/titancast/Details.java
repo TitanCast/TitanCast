@@ -53,7 +53,7 @@ public class Details {
         shownUpdate = true;
 
         Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://titancast.github.io/updates/updater.html?v=" + APP_VERSION));
+                Uri.parse("https://titancast.github.io/download/update.html?v=" + APP_VERSION));
         PendingIntent pIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
 
         Notification n = TitanCastNotification.build(

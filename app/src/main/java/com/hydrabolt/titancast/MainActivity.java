@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(new WFStatusReceiver(), intentFilter);
 
+        Details.setContext(this);
+
         checkForUpdate(false);
     }
 

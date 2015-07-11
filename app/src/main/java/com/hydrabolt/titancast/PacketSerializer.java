@@ -18,7 +18,7 @@ public class PacketSerializer {
         String packet = packetName;
         for(String param : packetInfo){
 
-            packet += " " + Base64.encodeToString(param.getBytes(), Base64.DEFAULT);
+            packet += " " + Base64.encodeToString(param.getBytes(), Base64.NO_WRAP);
         }
 
         return packet;
@@ -42,7 +42,7 @@ public class PacketSerializer {
 
         for(String param : splitData){
             try {
-                String paramValue = new String(Base64.decode(param, Base64.DEFAULT));
+                String paramValue = new String(Base64.decode(param, Base64.NO_WRAP));
                 toReturn.add(paramValue);
             }catch(UnknownError error){
 

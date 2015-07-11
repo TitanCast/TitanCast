@@ -91,7 +91,7 @@ public class WSServer extends WebSocketServer {
         Details.setHasViewData(false);
     }
 
-    public static void sendCustomDataToActive(String data) {
+    public static void sendCustomDataToActive(String[] data) {
 
         if (acceptedWebSocket != null && Details.connected() && Details.hasViewData()) {
             sendPacketToActive( PacketSerializer.generatePacket("custom_data", data) );
@@ -181,7 +181,7 @@ public class WSServer extends WebSocketServer {
             case "enable_accelerometer":
 
                 if (connectedAndInView) {
-                    CastActivity.getSensorManager().enableAccelerometerSensor();
+                    CastActivity.getSensorManager().enableAccelerometerSensor("enable_accelerometer");
                 }
                 break;
 

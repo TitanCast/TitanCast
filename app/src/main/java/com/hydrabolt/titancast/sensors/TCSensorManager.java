@@ -49,20 +49,22 @@ public class TCSensorManager {
 
     //ALL
         public static void unregisterAll(){
-            if(accelerometerSensorEnabled == 1)
+            if(accelerometerSensorEnabled == 1) {
                 disableAccelerometerSensor();
                 accelerometerSensorEnabled = 2;
+            }
         }
 
         public static void registerAll(){
             if(accelerometerSensorEnabled == 2) {
-                enableAccelerometerSensor();
+                enableAccelerometerSensor("registerAll");
             }
         }
 
     //ACCELEROMETER
-        public static void enableAccelerometerSensor(){
+        public static void enableAccelerometerSensor(String reason){
             if(accelerometerSensor != null && !(accelerometerSensorEnabled==1)){
+                Log.d("AccSensor-ENABLED", reason);
                 accelerometerSensorEnabled = 1;
                 sensorManager.registerListener(accelerometerSensor, sensorAccelerometer, accelerometerDelay);
             }
@@ -80,7 +82,7 @@ public class TCSensorManager {
         public static void setDelay(int s){
             disableAccelerometerSensor();
             accelerometerDelay = s;
-            enableAccelerometerSensor();
+            enableAccelerometerSensor("setDelay");
         }
 
         public static void accelerometerUpdate(float x, float y, float z){

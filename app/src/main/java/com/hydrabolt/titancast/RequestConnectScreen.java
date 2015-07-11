@@ -2,9 +2,11 @@ package com.hydrabolt.titancast;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.util.Base64DataException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,14 +40,22 @@ public class RequestConnectScreen extends AppCompatActivity {
         String appDesc = i.getStringExtra("app_desc");
         String appIcon = i.getStringExtra("app_icon");
 
-        String imageDataBytes = appIcon.substring(appIcon.indexOf(",") + 1);
+        ImageView cimg = (ImageView) findViewById(R.id.appIcon);
 
-        InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
+        if(!appIcon.equals("#none#")) {
+            try {
+                String imageDataBytes = appIcon.substring(appIcon.indexOf(",") + 1);
 
-        ImageView cimg = (ImageView)findViewById(R.id.appIcon);
-        cimg.setImageBitmap( BitmapFactory.decodeStream(stream) );
-        cimg.setMaxWidth(32);
-        cimg.setMaxHeight(32);
+                InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
+                cimg.setImageBitmap(BitmapFactory.decodeStream(stream));
+                cimg.setMaxWidth(32);
+                cimg.setMaxHeight(32);
+            }catch(Exception e){
+                cimg.setVisibility(View.GONE);
+            }
+        }else{
+            cimg.setVisibility(View.GONE);
+        }
 
         index = i.getIntExtra("client_id", 0);
 
