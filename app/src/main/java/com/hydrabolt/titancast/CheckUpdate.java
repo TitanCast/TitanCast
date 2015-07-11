@@ -37,34 +37,29 @@ public class CheckUpdate implements Runnable {
 
         try {
 
-            InputStream in = new URL("http://titancast.github.io/updates/version.history").openStream();
+            InputStream in = new URL("http://titancast.github.io/download/getlatest.html").openStream();
 
             try {
                 String lines[] = IOUtils.toString(in).split("\\r?\\n");
 
-                for (String line : lines) {
+                if(lines[0].equals( Details.getAppVersion() )) {
 
-                    if (!line.startsWith("#")) {
-                        String[] details = line.split("=");
-
-                        if (!details[0].equals(myVersion)) {
-                            //there is a new version available
-                            Details.showUpdate(details[0], override);
-                        } else {
-                            //not a new version
-                            if (override) {
-                                //only notify the user that no updates were found if they manually requested for an update check
-                                TitanCastNotification.showToast("No updates found", Toast.LENGTH_LONG);
-                            }
-                            return;
-                        }
+                    if (override) {
+                        //only notify the user that no updates were found if they manually requested for an update check
+                        TitanCastNotification.showToast("No updates found", Toast.LENGTH_LONG);
                     }
+
+                }else{
+
+                    Details.showUpdate(lines[0], override);
+                    return;
 
                 }
 
             } catch (Exception e) {
                 if (override) {
                     TitanCastNotification.showToast("Error fetching update list", Toast.LENGTH_LONG);
+                    Log.d("titancast", e.getLocalizedMessage());
                 }
             } finally {
                 IOUtils.closeQuietly(in);
