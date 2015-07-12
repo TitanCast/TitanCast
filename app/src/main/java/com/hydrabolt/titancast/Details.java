@@ -15,7 +15,7 @@ import com.hydrabolt.titancast.info_display.TitanCastNotification;
  */
 public class Details {
 
-    private static final String APP_VERSION = "0.0.1";
+    private static final String APP_VERSION = "0.0.2";
     private static boolean connected = false, hasViewData = false;
     private static Activity activity;
     private static boolean shownUpdate = false;
