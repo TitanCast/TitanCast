@@ -85,10 +85,15 @@ public class WSServer extends WebSocketServer {
     }
 
     public static void terminateActive() {
-        acceptedWebSocket.close(0);
-        acceptedWebSocket = null;
-        Details.setConnected(false);
-        Details.setHasViewData(false);
+        if(acceptedWebSocket != null){
+            acceptedWebSocket.close(0);
+            acceptedWebSocket = null;
+            Details.setConnected(false);
+            Details.setHasViewData(false);
+            CastActivity.getSensorManager().disableAccelerometerSensor();
+            CastActivity.getSensorManager().setDelay(10);
+            TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
+        }
     }
 
     public static void sendCustomDataToActive(String[] data) {
@@ -223,6 +228,13 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket webSocket, Exception e) {
+        end();
+    }
 
+    public void end(){
+        for(WebSocket ws : socketList){
+            ws.close(0);
+            socketList.remove(ws);
+        }
     }
 }

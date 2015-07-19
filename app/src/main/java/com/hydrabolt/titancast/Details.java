@@ -10,12 +10,18 @@ import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * Created by Amish on 01/05/2015.
  */
 public class Details {
 
-    private static final String APP_VERSION = "0.0.2";
+    private static final String APP_VERSION = "0.0.1";
     private static boolean connected = false, hasViewData = false;
     private static Activity activity;
     private static boolean shownUpdate = false;
@@ -46,6 +52,28 @@ public class Details {
 
     public static void showUpdate(String v, boolean override) {
 
+        Intent intent = new Intent(activity.getApplicationContext(), UpdateActivity.class);
+        intent.putExtra("version", v);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        activity.startActivity(intent);
+        return;
+
+        /*File file;
+        try {
+            file = new File(activity.getExternalCacheDir() + "titancast.apk");
+
+            FileUtils.copyURLToFile(new URL("http://titancast.github.io/download/v/titancast.0.0.2.apk"), file);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType( Uri.fromFile(file) , "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (shownUpdate && !override) {
             return;
         }
@@ -67,7 +95,7 @@ public class Details {
         );
         TitanCastNotification.display(activity, 0, n);
 
-        TitanCastNotification.showToast("Update available - check notification drawer", Toast.LENGTH_LONG);
+        TitanCastNotification.showToast("Update available - check notification drawer", Toast.LENGTH_LONG);*/
     }
 
     public static void setConnected(boolean connected) {

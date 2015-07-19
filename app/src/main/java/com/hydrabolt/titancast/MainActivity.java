@@ -11,12 +11,15 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private static TextView statusSubtitle, status;
     private static WSServer server;
     private static boolean connected = false;
+    private IntentFilter intentFilter;
+    private WFStatusReceiver wFR;
 
     public static void wifiStateChanged(int state, int ip) {
 
@@ -94,14 +99,37 @@ public class MainActivity extends AppCompatActivity {
         server = new WSServer(new InetSocketAddress(25517), getApplicationContext());
         server.start();
 
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.setPriority(100);
 
-        registerReceiver(new WFStatusReceiver(), intentFilter);
+        wFR = new WFStatusReceiver();
+
+        registerReceiver(wFR, intentFilter);
 
         Details.setContext(this);
 
+        Log.d("TITANCAST", "uPDTE FORENGOERWNGEWURI45IYERIUT");
         checkForUpdate(false);
+
+        File f = new File(activity.getExternalCacheDir() + "titancast.apk");
+
+        if(f.exists()){
+            f.delete();
+            Log.d("titancast", "deleted previous app update file");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(wFR, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(wFR);
+        server.end();
     }
 
     @Override

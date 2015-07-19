@@ -27,7 +27,7 @@ public class TCSensorManager {
     private static Activity a;
 
     private static SensorManager sensorManager;
-    private static int accelerometerCap = 1000;
+    private static int accelerometerCap = 0;
     private static long accelerometerCapLast = System.currentTimeMillis();
 
     public TCSensorManager(Activity a){

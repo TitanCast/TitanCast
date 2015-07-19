@@ -2,12 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hydrabolt.titancast"
     android:versionCode="2"
-    android:versionName="0.0.2">
+    android:versionName="0.0.2" >
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -26,13 +31,17 @@
         <activity
             android:name=".RequestConnectScreen"
             android:label="@string/title_activity_request_connect_screen"
-            android:theme="@style/PermissionTheme">
+            android:theme="@style/PermissionTheme" >
         </activity>
         <activity
             android:name=".CastActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_cast"
-            android:theme="@style/CastWebView"
-            android:configChanges="orientation|screenSize">
+            android:theme="@style/CastWebView" >
+        </activity>
+        <activity
+            android:name=".UpdateActivity"
+            android:label="@string/title_activity_update" >
         </activity>
     </application>
 
