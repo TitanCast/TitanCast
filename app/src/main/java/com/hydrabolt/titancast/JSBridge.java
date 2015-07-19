@@ -46,7 +46,7 @@ public class JSBridge {
 
         } catch (JSONException exception) {
 
-            Log.d("titancast", "error parsing JSON @ JSBridge instance - " + exception.getLocalizedMessage());
+            Log.d("titancast-jsbridge", "error parsing JSON - " + exception.getLocalizedMessage());
             return;
 
         }

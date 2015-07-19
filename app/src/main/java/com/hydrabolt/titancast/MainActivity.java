@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static boolean connected = false;
     private IntentFilter intentFilter;
     private WFStatusReceiver wFR;
+    private static boolean checkedUpdate = false;
 
     public static void wifiStateChanged(int state, int ip) {
 
@@ -108,8 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
         Details.setContext(this);
 
-        Log.d("TITANCAST", "uPDTE FORENGOERWNGEWURI45IYERIUT");
-        checkForUpdate(false);
+        if(!checkedUpdate) {
+            checkForUpdate(false);
+            checkedUpdate = true;
+        }
 
         File f = new File(activity.getExternalCacheDir() + "titancast.apk");
 
@@ -129,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(wFR);
-        server.end();
     }
 
     @Override

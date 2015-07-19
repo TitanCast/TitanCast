@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +23,12 @@ import java.net.URL;
 
 public class UpdateActivity extends ActionBarActivity {
 
+    public static boolean open = false;
+
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        open = true;
         setContentView(R.layout.activity_update);
 
         TextView view = (TextView) findViewById(R.id.updateText);
@@ -50,12 +54,13 @@ public class UpdateActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     File file;
-                    file = new File(getExternalCacheDir() + "titancast.apk");
+                    file = new File(getExternalCacheDir(), "titancast.apk");
 
                     try {
                         FileUtils.copyURLToFile(new URL("http://titancast.github.io/download/v/titancast.0.0.2.apk"), file);
                     } catch (IOException e) {
-                        TitanCastNotification.showToast("Error Updating", Toast.LENGTH_LONG);
+                        TitanCastNotification.showToast("Error Updating, visit site and manually update.", Toast.LENGTH_LONG);
+                        Log.d("titancast-update", "error - "+e.getLocalizedMessage());
                         finish();
                     }
 
@@ -70,9 +75,15 @@ public class UpdateActivity extends ActionBarActivity {
             thread.start();
 
         } catch ( Exception e ) {
-            TitanCastNotification.showToast("Error Updating", Toast.LENGTH_LONG);
+            TitanCastNotification.showToast("Error Updating, visit site and manually update.", Toast.LENGTH_LONG);
             finish();
         }
 
+    }
+
+    @Override
+    public void onStop () {
+        super.onStop();
+        open = false;
     }
 }

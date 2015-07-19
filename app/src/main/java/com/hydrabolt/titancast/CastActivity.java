@@ -44,6 +44,8 @@ public class CastActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        MainActivity.getServer().setCastActivity(this);
+
         if (!Details.connected()) {
             finish();
         }

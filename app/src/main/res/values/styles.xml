@@ -16,12 +16,12 @@
 
     <style name="MyCustomTheme" parent="@style/Theme.AppCompat">
         <item name="colorPrimary">#1093C7</item>
-        <item name="colorPrimaryDark">#1093C7</item>
+        <item name="colorPrimaryDark">#0E80AD</item>
     </style>
 
     <style name="PermissionTheme" parent="MyCustomTheme">
         <item name="colorPrimary">#0C3747</item>
-        <item name="colorPrimaryDark">#0C3747</item>
+        <item name="colorPrimaryDark">#0B2C38</item>
     </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">

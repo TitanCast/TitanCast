@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
@@ -21,7 +22,7 @@ import java.net.URL;
  */
 public class Details {
 
-    private static final String APP_VERSION = "0.0.1";
+    private static final String APP_VERSION = BuildConfig.VERSION_NAME;
     private static boolean connected = false, hasViewData = false;
     private static Activity activity;
     private static boolean shownUpdate = false;
@@ -52,50 +53,15 @@ public class Details {
 
     public static void showUpdate(String v, boolean override) {
 
-        Intent intent = new Intent(activity.getApplicationContext(), UpdateActivity.class);
-        intent.putExtra("version", v);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(!UpdateActivity.open) {
+            Intent intent = new Intent(activity.getApplicationContext(), UpdateActivity.class);
+            intent.putExtra("version", v);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        activity.startActivity(intent);
-        return;
-
-        /*File file;
-        try {
-            file = new File(activity.getExternalCacheDir() + "titancast.apk");
-
-            FileUtils.copyURLToFile(new URL("http://titancast.github.io/download/v/titancast.0.0.2.apk"), file);
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType( Uri.fromFile(file) , "application/vnd.android.package-archive");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(intent);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (shownUpdate && !override) {
             return;
         }
 
-        shownUpdate = true;
-
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://titancast.github.io/download/update.html?v=" + APP_VERSION));
-        PendingIntent pIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
-
-        Notification n = TitanCastNotification.build(
-                "Update Available",
-                "An update is available - tap to install",
-                R.drawable.notificon,
-                pIntent,
-                true,
-                "An update to TitanCast is available",
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        );
-        TitanCastNotification.display(activity, 0, n);
-
-        TitanCastNotification.showToast("Update available - check notification drawer", Toast.LENGTH_LONG);*/
     }
 
     public static void setConnected(boolean connected) {
