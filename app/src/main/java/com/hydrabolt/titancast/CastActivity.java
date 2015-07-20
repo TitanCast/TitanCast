@@ -66,15 +66,32 @@ public class CastActivity extends AppCompatActivity {
         View v = findViewById(R.id.castWebView);
 
         castView = (WebView) findViewById(R.id.castWebView);
+        castView.clearCache(true);
         WebSettings castViewSettings = castView.getSettings();
         castViewSettings.setJavaScriptEnabled(true);
-        castView.setWebViewClient(new WebViewClient());
-        castView.addJavascriptInterface(new JSBridge(this, this), "device");
+        castView.setWebViewClient(new WebViewClient(){
+
+            private boolean finished = false;
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+
+                if(!finished){
+                    finished = true;
+                    String[] empty = {};
+                    MainActivity.getServer().sendPacketToActive(PacketSerializer.generatePacket("view-loaded", empty));
+                }
+
+            }
+
+        });
+        castView.addJavascriptInterface(new JSBridge(getApplicationContext(), this), "device");
         castView.loadUrl(url);
 
         activity = this;
 
         sensorManager = new TCSensorManager(this);
+        sensorManager.disableAccelerometerSensor(); // default
     }
 
     @Override

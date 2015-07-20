@@ -51,21 +51,22 @@ public class TCSensorManager {
 
     public static void registerAll() {
         if (accelerometerSensorEnabled == 2) {
-            enableAccelerometerSensor();
+            enableAccelerometerSensor("register all called");
         }
     }
 
     //ACCELEROMETER
-    public static void enableAccelerometerSensor() {
+    public static void enableAccelerometerSensor(String why) {
         if (accelerometerSensor != null && !(accelerometerSensorEnabled == 1)) {
-            Log.d("titancast-accelerometer", "accelerometer enabled");
+            Log.d("titancast-accelerometer", "accelerometer enabled BECAUSE "+why);
             accelerometerSensorEnabled = 1;
             sensorManager.registerListener(accelerometerSensor, sensorAccelerometer, accelerometerDelay);
         }
     }
 
     public static void disableAccelerometerSensor() {
-        if (accelerometerSensor != null && accelerometerSensorEnabled == 1) {
+        if (accelerometerSensor != null && accelerometerSensorEnabled != 0) {
+            Log.d("titancast-accelerometer", "accelerometer disabled");
             accelerometerSensorEnabled = 0;
             sensorManager.unregisterListener(accelerometerSensor);
         }
@@ -78,7 +79,7 @@ public class TCSensorManager {
     public static void setDelay(int s) {
         disableAccelerometerSensor();
         accelerometerDelay = s;
-        enableAccelerometerSensor();
+        enableAccelerometerSensor("delay was set");
     }
 
     public static void accelerometerUpdate(float x, float y, float z) {

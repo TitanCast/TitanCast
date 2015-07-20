@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -20,7 +23,7 @@ import java.io.InputStream;
 public class RequestConnectScreen extends AppCompatActivity {
 
     int index = 0;
-    private TextView appName, appDesc;
+    private TextView appName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,6 @@ public class RequestConnectScreen extends AppCompatActivity {
             finish();
 
         appName = (TextView) findViewById(R.id.appName);
-        appDesc = (TextView) findViewById(R.id.appDesc);
 
         setTitle("Casting Permission");
 
@@ -52,6 +54,7 @@ public class RequestConnectScreen extends AppCompatActivity {
                 cimg.setMaxHeight(32);
             }catch(Exception e){
                 cimg.setVisibility(View.GONE);
+                TitanCastNotification.showToast("Error Loading App Icon", Toast.LENGTH_LONG);
             }
         }else{
             cimg.setVisibility(View.GONE);
@@ -60,7 +63,6 @@ public class RequestConnectScreen extends AppCompatActivity {
         index = i.getIntExtra("client_id", 0);
 
         this.appName.setText(appName);
-        this.appDesc.setText(appDesc);
     }
 
 

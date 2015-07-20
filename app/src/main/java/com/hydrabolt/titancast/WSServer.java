@@ -79,6 +79,8 @@ public class WSServer extends WebSocketServer {
 
     public static void acceptRequest(int index) {
 
+        Log.d("titancast","accept");
+
         try {
             socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
             Details.setConnected(true);
@@ -191,7 +193,7 @@ public class WSServer extends WebSocketServer {
             case "enable_accelerometer":
 
                 if (connectedAndInView) {
-                    CastActivity.getSensorManager().enableAccelerometerSensor();
+                    CastActivity.getSensorManager().enableAccelerometerSensor("websocket enabled it");
                 }
                 break;
 
@@ -231,6 +233,8 @@ public class WSServer extends WebSocketServer {
                         castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
                     } else if (orientation.equals("reverse_landscape")) {
                         castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                    } else if (orientation.equals("sensor")) {
+                        castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                     }
                 }
             default:

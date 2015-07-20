@@ -59,6 +59,7 @@ public class JSBridge {
 
     @JavascriptInterface
     public void setOrientation(String orientation) {
+        Log.d("titancast-jsbridge", "set orientation "+orientation+" requested.");
         if (orientation.equals("portrait")) {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else if (orientation.equals("landscape")) {
@@ -67,6 +68,8 @@ public class JSBridge {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
         } else if (orientation.equals("reverse_landscape")) {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        } else if (orientation.equals("sensor")){
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
     }
 
