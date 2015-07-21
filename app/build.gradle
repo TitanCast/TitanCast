@@ -8,8 +8,8 @@ android {
         applicationId "com.hydrabolt.titancast"
         minSdkVersion 17
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode
+        versionName "0.0.4"
     }
     buildTypes {
         release {
@@ -21,8 +21,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/java_websocket.jar')
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:support-v4:22.1.1'
-    compile files('libs/commons-io-2.4.jar')
 }

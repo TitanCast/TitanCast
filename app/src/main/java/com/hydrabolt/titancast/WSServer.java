@@ -1,11 +1,14 @@
 package com.hydrabolt.titancast;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Vibrator;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
@@ -27,6 +30,7 @@ public class WSServer extends WebSocketServer {
     private static String[] empty = {};
     private static String deviceDetails;
     private static ArrayList<String> deviceDetailsRaw;
+    private Activity castActivity;
 
     private static WebSocket acceptedWebSocket;
 
@@ -75,26 +79,34 @@ public class WSServer extends WebSocketServer {
 
     public static void acceptRequest(int index) {
 
+        Log.d("titancast","accept");
+
         try {
             socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
             Details.setConnected(true);
             acceptedWebSocket = socketList.get(index);
         }catch(IndexOutOfBoundsException e){
+            Log.d("titancast-wsserver", "error - "+e.getLocalizedMessage());
             TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
         }
     }
 
     public static void terminateActive() {
-        acceptedWebSocket.close(0);
-        acceptedWebSocket = null;
-        Details.setConnected(false);
-        Details.setHasViewData(false);
+        if(acceptedWebSocket != null){
+            acceptedWebSocket.close(0);
+            acceptedWebSocket = null;
+            Details.setConnected(false);
+            Details.setHasViewData(false);
+            CastActivity.getSensorManager().disableAccelerometerSensor();
+            CastActivity.getSensorManager().setDelay(10);
+            TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
+        }
     }
 
     public static void sendCustomDataToActive(String[] data) {
 
         if (acceptedWebSocket != null && Details.connected() && Details.hasViewData()) {
-            sendPacketToActive( PacketSerializer.generatePacket("custom_data", data) );
+            sendPacketToActive(PacketSerializer.generatePacket("custom_data", data));
         }
     }
 
@@ -181,7 +193,7 @@ public class WSServer extends WebSocketServer {
             case "enable_accelerometer":
 
                 if (connectedAndInView) {
-                    CastActivity.getSensorManager().enableAccelerometerSensor("enable_accelerometer");
+                    CastActivity.getSensorManager().enableAccelerometerSensor("websocket enabled it");
                 }
                 break;
 
@@ -204,14 +216,27 @@ public class WSServer extends WebSocketServer {
                     CastActivity.getSensorManager().setDelay(speed);
                 }
                 break;
+            case "set_orientation":
+                if(msg.size() == 2) {
 
-            case "set_accelerometer_cap":
+                    String orientation = msg.get(1);
 
-                if (connectedAndInView && msg.size() == 2) {
-                    CastActivity.getSensorManager().setAccelerometerCap(Integer.parseInt(msg.get(1)));
+                    if(castActivity == null){
+                        break;
+                    }
+
+                    if (orientation.equals("portrait")) {
+                        castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    } else if (orientation.equals("landscape")) {
+                        castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    } else if (orientation.equals("reverse_portrait")) {
+                        castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+                    } else if (orientation.equals("reverse_landscape")) {
+                        castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                    } else if (orientation.equals("sensor")) {
+                        castActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                    }
                 }
-
-                break;
             default:
 
                 webSocket.send(PacketSerializer.generatePacket("unknown_command", empty));
@@ -221,8 +246,19 @@ public class WSServer extends WebSocketServer {
 
     }
 
+    public void setCastActivity(Activity a){
+        this.castActivity = a;
+    }
+
     @Override
     public void onError(WebSocket webSocket, Exception e) {
+        Log.d("titancast-wsserver", "error - "+e.getLocalizedMessage());
+    }
 
+    public void end(){
+        for(WebSocket ws : socketList){
+            ws.close(0);
+            socketList.remove(ws);
+        }
     }
 }

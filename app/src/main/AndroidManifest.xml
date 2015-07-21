@@ -5,7 +5,12 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -24,13 +29,17 @@
         <activity
             android:name=".RequestConnectScreen"
             android:label="@string/title_activity_request_connect_screen"
-            android:theme="@style/PermissionTheme">
+            android:theme="@style/PermissionTheme" >
         </activity>
         <activity
             android:name=".CastActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_cast"
-            android:theme="@style/CastWebView"
-            android:configChanges="orientation|screenSize">
+            android:theme="@style/CastWebView" >
+        </activity>
+        <activity
+            android:name=".UpdateActivity"
+            android:label="@string/title_activity_update" >
         </activity>
     </application>
 

@@ -23,7 +23,7 @@ import java.net.URL;
  */
 public class CheckUpdate implements Runnable {
 
-    boolean override = false;
+    boolean override = false, alreadyShown = false;
 
     public CheckUpdate(boolean override) {
         this.override = override;
@@ -32,6 +32,14 @@ public class CheckUpdate implements Runnable {
 
     @Override
     public void run() {
+
+        if(alreadyShown){
+            if(!override){
+                return;
+            }
+        }
+
+        alreadyShown = true;
 
         String myVersion = Details.getAppVersion();
 

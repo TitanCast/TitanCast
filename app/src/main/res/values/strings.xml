@@ -9,5 +9,6 @@
     <string name="title_activity_cast_web_view">CastWebView</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_cast">CastActivity</string>
+    <string name="title_activity_cast">Cast Activity</string>
+    <string name="title_activity_update">Update Available</string>
 </resources>
