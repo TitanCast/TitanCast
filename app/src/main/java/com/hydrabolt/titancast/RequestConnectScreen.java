@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Base64DataException;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +56,7 @@ public class RequestConnectScreen extends AppCompatActivity {
             }catch(Exception e){
                 cimg.setVisibility(View.GONE);
                 TitanCastNotification.showToast("Error Loading App Icon", Toast.LENGTH_LONG);
+                Log.d("titancastrequest", "Error - " + e.getLocalizedMessage());
             }
         }else{
             cimg.setVisibility(View.GONE);

@@ -24,11 +24,15 @@ import java.net.URL;
 public class UpdateActivity extends ActionBarActivity {
 
     public static boolean open = false;
+    public static String version = "";
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         open = true;
+
+        version = getIntent().getStringExtra("version");
+
         setContentView(R.layout.activity_update);
 
         TextView view = (TextView) findViewById(R.id.updateText);
@@ -53,11 +57,12 @@ public class UpdateActivity extends ActionBarActivity {
             Thread thread = new Thread(new Runnable(){
                 @Override
                 public void run() {
+
                     File file;
                     file = new File(getExternalCacheDir(), "titancast.apk");
 
                     try {
-                        FileUtils.copyURLToFile(new URL("http://titancast.github.io/download/v/titancast.0.0.2.apk"), file);
+                        FileUtils.copyURLToFile(new URL("http://titancast.github.io/download/v/titancast."+version+".apk"), file);
                     } catch (IOException e) {
                         TitanCastNotification.showToast("Error Updating, visit site and manually update.", Toast.LENGTH_LONG);
                         Log.d("titancast-update", "error - "+e.getLocalizedMessage());
