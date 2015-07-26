@@ -15,6 +15,7 @@ import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
@@ -119,12 +120,14 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
 
-        if (socketList.size() > 10) {
+        if (socketList.size() > 0) {
             webSocket.close(0);
+            return;
         }
 
         webSocket.send(deviceDetails);
         socketList.add(webSocket);
+
     }
 
     @Override
@@ -252,7 +255,14 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket webSocket, Exception e) {
-        Log.d("titancast-wsserver", "error - "+e.getLocalizedMessage());
+        Log.d("titancast-wsserver", (webSocket == null ? "wsserver-interror " : "wsserror-clerror ") + e.getLocalizedMessage());
+        if(webSocket != null){
+            socketList.remove(webSocket);
+            if (webSocket == acceptedWebSocket) {
+                terminateActive();
+                CastActivity.close();
+            }
+        }
     }
 
     public void end(){

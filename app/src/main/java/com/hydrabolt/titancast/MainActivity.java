@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
 import com.hydrabolt.titancast.secure.SSLGen;
 
+import org.java_websocket.WebSocketFactory;
+import org.java_websocket.WebSocketImpl;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import java.io.File;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private WFStatusReceiver wFR;
     private static boolean checkedUpdate = false;
     private static File extCacheDir;
+    public static DefaultSSLWebSocketServerFactory wsf;
 
     public static void wifiStateChanged(int state, int ip) {
 
@@ -61,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 String STOREPASSWORD = "titancast-androidapp";
                 String KEYPASSWORD = "titancast-androidapp";
 
+                WebSocketImpl.DEBUG = true;
+
                 try {
                     KeyStore ks = KeyStore.getInstance(STORETYPE);
                     File kf = keystore;
@@ -76,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
                     sslContext = SSLContext.getInstance("TLS");
                     sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-                    server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+                    wsf = new DefaultSSLWebSocketServerFactory(sslContext);
+
+                    server.setWebSocketFactory(wsf);
 
                     server.start();
                     TitanCastNotification.showToast("(hopefully) success", Toast.LENGTH_LONG);
