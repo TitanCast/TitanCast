@@ -7,4 +7,6 @@
         android:orderInCategory="101" app:showAsAction="never" />
     <item android:id="@+id/menu_website" android:title="Website"
         android:orderInCategory="102" app:showAsAction="never" />
+    <item android:id="@+id/menu_regen" android:title="Regenerate Keys"
+        android:orderInCategory="103" app:showAsAction="never" />
 </menu>

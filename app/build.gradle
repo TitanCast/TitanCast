@@ -8,8 +8,8 @@ android {
         applicationId "com.hydrabolt.titancast"
         minSdkVersion 17
         targetSdkVersion 22
-        versionCode 4
-        versionName "0.0.4"
+        versionCode 5
+        versionName "0.0.5"
     }
     buildTypes {
         release {
@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'org.bouncycastle:bcpkix-jdk15on:1.52'
+    compile 'commons-io:commons-io:2.4'
+
 }

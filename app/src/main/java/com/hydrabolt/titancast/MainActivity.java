@@ -20,8 +20,6 @@ import android.widget.Toast;
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
 import com.hydrabolt.titancast.secure.SSLGen;
 
-import org.java_websocket.WebSocketFactory;
-import org.java_websocket.WebSocketImpl;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import java.io.File;
@@ -36,14 +34,14 @@ import javax.net.ssl.TrustManagerFactory;
 public class MainActivity extends AppCompatActivity {
 
     public static Activity activity;
+    public static DefaultSSLWebSocketServerFactory wsf;
     private static TextView statusSubtitle, status;
     private static WSServer server;
     private static boolean connected = false;
-    private IntentFilter intentFilter;
-    private WFStatusReceiver wFR;
     private static boolean checkedUpdate = false;
     private static File extCacheDir;
-    public static DefaultSSLWebSocketServerFactory wsf;
+    private IntentFilter intentFilter;
+    private WFStatusReceiver wFR;
 
     public static void wifiStateChanged(int state, int ip) {
 
@@ -55,48 +53,61 @@ public class MainActivity extends AppCompatActivity {
             status.setText(FormattingTools.getIP(ip));
             status.setTypeface(Typeface.MONOSPACE);
 
-            File keystore = new File(extCacheDir, "keystore.jks");
-
-            if(SSLGen.generate("titancast", keystore, "titancast-androidapp")){
-                server = new WSServer(new InetSocketAddress(25517), activity.getApplicationContext());
-
-                String STORETYPE = "BKS";
-                String STOREPASSWORD = "titancast-androidapp";
-                String KEYPASSWORD = "titancast-androidapp";
-
-                WebSocketImpl.DEBUG = true;
-
-                try {
-                    KeyStore ks = KeyStore.getInstance(STORETYPE);
-                    File kf = keystore;
-                    ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
-
-                    KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-                    kmf.init(ks, KEYPASSWORD.toCharArray());
-
-                    TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-                    tmf.init(ks);
-
-                    SSLContext sslContext = null;
-                    sslContext = SSLContext.getInstance("TLS");
-                    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-
-                    wsf = new DefaultSSLWebSocketServerFactory(sslContext);
-
-                    server.setWebSocketFactory(wsf);
-
-                    server.start();
-                    TitanCastNotification.showToast("(hopefully) success", Toast.LENGTH_LONG);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-
         } else {
             statusSubtitle.setText("uh-oh");
             status.setText("connect to wi-fi");
         }
+    }
+
+    static boolean alreadyOpenedServer = false;
+
+    public static void tryOpeningServer() {
+
+        if(alreadyOpenedServer){
+            return;
+        }
+
+        server = new WSServer(new InetSocketAddress(25517), activity.getApplicationContext());
+
+        alreadyOpenedServer = true;
+
+        File keystore = new File(extCacheDir, "keystore.jks");
+
+        if (!keystore.exists()) {
+            if (!SSLGen.generate("titancast-ssl", keystore, "titancast-androidapp")) {
+                //error it out here
+            }
+        }
+
+        String STOREPASSWORD = "titancast-androidapp";
+        String KEYPASSWORD = STOREPASSWORD;
+
+        try {
+            KeyStore ks = KeyStore.getInstance("BKS");
+            File kf = keystore;
+            ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+            kmf.init(ks, KEYPASSWORD.toCharArray());
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            tmf.init(ks);
+
+            SSLContext sslContext = null;
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+            wsf = new DefaultSSLWebSocketServerFactory(sslContext);
+
+            server.setWebSocketFactory(wsf);
+
+            server.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //error
+        }
+
     }
 
     public static void checkWifiStatus() {
@@ -158,17 +169,20 @@ public class MainActivity extends AppCompatActivity {
 
         Details.setContext(this);
 
-        if(!checkedUpdate) {
+        if (!checkedUpdate) {
             checkForUpdate(false);
             checkedUpdate = true;
         }
 
         File f = new File(activity.getExternalCacheDir() + "titancast.apk");
 
-        if(f.exists()){
+        if (f.exists()) {
             f.delete();
             Log.d("titancast", "deleted previous app update file");
         }
+
+        tryOpeningServer();
+
     }
 
     @Override
@@ -200,6 +214,18 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.menu_website) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://titancast.github.io/"));
             startActivity(intent);
+            return true;
+        }
+        if (id == R.id.menu_regen) {
+
+            File keystore = new File(extCacheDir, "keystore.jks");
+
+            if (SSLGen.generate("titancast-ssl", keystore, "titancast-androidapp")) {
+                TitanCastNotification.showToast("Success Regenerating", Toast.LENGTH_LONG);
+            }else{
+                TitanCastNotification.showToast("Failure Regenerating", Toast.LENGTH_LONG);
+            }
+
             return true;
         }
 

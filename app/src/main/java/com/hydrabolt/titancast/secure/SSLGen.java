@@ -1,5 +1,7 @@
 package com.hydrabolt.titancast.secure;
 
+import android.util.Log;
+
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -11,10 +13,13 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -53,8 +58,10 @@ public class SSLGen {
             builder.addRDN(BCStyle.O, "TitanCast");
             builder.addRDN(BCStyle.CN, hostname);
 
-            Date notBefore = new Date(System.currentTimeMillis() - ONEDAY);
-            Date notAfter = new Date(System.currentTimeMillis() + 10 * ONEYEAR);
+            long baseTime = 1420070400;
+
+            Date notBefore = new Date(baseTime - ONEDAY);
+            Date notAfter = new Date(baseTime + 100 * ONEYEAR);
             BigInteger serial = BigInteger.valueOf(System.currentTimeMillis());
 
             X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(builder.build(),
@@ -80,6 +87,9 @@ public class SSLGen {
             FileOutputStream fos = new FileOutputStream(keystore);
             store.store(fos, password.toCharArray());
             fos.close();
+
+            Log.d("the md5 is...", checksum(keystore));
+
             return true;
 
         } catch (Exception e) {
@@ -87,6 +97,48 @@ public class SSLGen {
         }
 
         return false;
+    }
+    public static String getMD5EncryptedString(String encTarget){
+        MessageDigest mdEnc = null;
+        try {
+            mdEnc = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Exception while encrypting to md5");
+            e.printStackTrace();
+        } // Encryption algorithm
+        mdEnc.update(encTarget.getBytes(), 0, encTarget.length());
+        String md5 = new BigInteger(1, mdEnc.digest()).toString(16);
+        while ( md5.length() < 32 ) {
+            md5 = "0"+md5;
+        }
+        return md5;
+    }
+
+    public static String checksum(File file) {
+        try {
+            InputStream fin = new FileInputStream(file);
+            java.security.MessageDigest md5er =
+                    MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[1024];
+            int read;
+            do {
+                read = fin.read(buffer);
+                if (read > 0)
+                    md5er.update(buffer, 0, read);
+            } while (read != -1);
+            fin.close();
+            byte[] digest = md5er.digest();
+            if (digest == null)
+                return null;
+            String strDigest = "0x";
+            for (int i = 0; i < digest.length; i++) {
+                strDigest += Integer.toString((digest[i] & 0xff)
+                        + 0x100, 16).substring(1).toUpperCase();
+            }
+            return strDigest;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }
