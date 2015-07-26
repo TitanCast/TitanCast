@@ -32,4 +32,14 @@ public class FormattingTools {
 
     }
 
+    public static String getTrueIP(int ip){
+        String ipStr = String.format("%d.%d.%d.%d",
+                (ip & 0xff),
+                (ip >> 8 & 0xff),
+                (ip >> 16 & 0xff),
+                (ip >> 24 & 0xff));
+
+        return ipStr;
+    }
+
 }

@@ -18,9 +18,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
+import com.hydrabolt.titancast.secure.SSLGen;
+
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetSocketAddress;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private IntentFilter intentFilter;
     private WFStatusReceiver wFR;
     private static boolean checkedUpdate = false;
+    private static File extCacheDir;
 
     public static void wifiStateChanged(int state, int ip) {
 
@@ -41,6 +51,40 @@ public class MainActivity extends AppCompatActivity {
             statusSubtitle.setText("connect to");
             status.setText(FormattingTools.getIP(ip));
             status.setTypeface(Typeface.MONOSPACE);
+
+            File keystore = new File(extCacheDir, "keystore.jks");
+
+            if(SSLGen.generate("titancast", keystore, "titancast-androidapp")){
+                server = new WSServer(new InetSocketAddress(25517), activity.getApplicationContext());
+
+                String STORETYPE = "BKS";
+                String STOREPASSWORD = "titancast-androidapp";
+                String KEYPASSWORD = "titancast-androidapp";
+
+                try {
+                    KeyStore ks = KeyStore.getInstance(STORETYPE);
+                    File kf = keystore;
+                    ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+
+                    KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+                    kmf.init(ks, KEYPASSWORD.toCharArray());
+
+                    TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+                    tmf.init(ks);
+
+                    SSLContext sslContext = null;
+                    sslContext = SSLContext.getInstance("TLS");
+                    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+                    server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+
+                    server.start();
+                    TitanCastNotification.showToast("(hopefully) success", Toast.LENGTH_LONG);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+            }
 
         } else {
             statusSubtitle.setText("uh-oh");
@@ -89,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
+        extCacheDir = getExternalCacheDir();
 
         registerViews();
         setupViews();
@@ -96,9 +141,6 @@ public class MainActivity extends AppCompatActivity {
         TitanCastNotification.setActivity(activity);
 
         checkWifiStatus();
-
-        server = new WSServer(new InetSocketAddress(25517), getApplicationContext());
-        server.start();
 
         intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.setPriority(100);
