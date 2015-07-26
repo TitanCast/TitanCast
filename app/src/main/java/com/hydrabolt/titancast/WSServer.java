@@ -15,7 +15,6 @@ import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
