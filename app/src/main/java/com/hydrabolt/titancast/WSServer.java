@@ -119,12 +119,16 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
 
-        if (socketList.size() > 10) {
-            webSocket.close(0);
+        Log.d("new conn", clientHandshake.getResourceDescriptor());
+
+        if (socketList.size() > 0) {
+            webSocket.close();
+            return;
         }
 
         webSocket.send(deviceDetails);
         socketList.add(webSocket);
+
     }
 
     @Override
@@ -252,7 +256,17 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket webSocket, Exception e) {
-        Log.d("titancast-wsserver", "error - "+e.getLocalizedMessage());
+
+        e.printStackTrace();
+
+        if(webSocket != null){
+            socketList.remove(webSocket);
+            if (webSocket == acceptedWebSocket) {
+                terminateActive();
+                CastActivity.close();
+            }
+            webSocket.close();
+        }
     }
 
     public void end(){

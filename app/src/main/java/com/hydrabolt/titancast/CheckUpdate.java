@@ -1,13 +1,6 @@
 package com.hydrabolt.titancast;
 
-import android.app.Activity;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
@@ -33,8 +26,8 @@ public class CheckUpdate implements Runnable {
     @Override
     public void run() {
 
-        if(alreadyShown){
-            if(!override){
+        if (alreadyShown) {
+            if (!override) {
                 return;
             }
         }
@@ -45,22 +38,27 @@ public class CheckUpdate implements Runnable {
 
         try {
 
-            InputStream in = new URL("http://titancast.github.io/download/getlatest.html").openStream();
+            InputStream in = new URL("http://192.168.0.9:4000/download/getlatest" + Details.getDownloadChannel() + ".html").openStream();
 
             try {
                 String lines[] = IOUtils.toString(in).split("\\r?\\n");
 
-                if(lines[0].equals( Details.getAppVersion() )) {
+                String version = lines[0];
+                int intVersion = Integer.parseInt(lines[1]);
+                String downloadURL = lines[2];
+                String buildType = lines[3];
+
+                if (intVersion > Details.getAppVersionInt()) {
+
+                    Details.showUpdate(version, intVersion, downloadURL, buildType, override);
+                    return;
+
+                } else {
 
                     if (override) {
                         //only notify the user that no updates were found if they manually requested for an update check
                         TitanCastNotification.showToast("No updates found", Toast.LENGTH_LONG);
                     }
-
-                }else{
-
-                    Details.showUpdate(lines[0], override);
-                    return;
 
                 }
 

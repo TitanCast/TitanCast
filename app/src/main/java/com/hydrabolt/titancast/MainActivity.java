@@ -15,22 +15,33 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     public static Activity activity;
+    public static DefaultSSLWebSocketServerFactory wsf;
     private static TextView statusSubtitle, status;
     private static WSServer server;
     private static boolean connected = false;
+    private static boolean checkedUpdate = false;
+    private static File extCacheDir;
     private IntentFilter intentFilter;
     private WFStatusReceiver wFR;
-    private static boolean checkedUpdate = false;
 
     public static void wifiStateChanged(int state, int ip) {
 
@@ -46,6 +57,49 @@ public class MainActivity extends AppCompatActivity {
             statusSubtitle.setText("uh-oh");
             status.setText("connect to wi-fi");
         }
+    }
+
+    static boolean alreadyOpenedServer = false;
+
+    public void tryOpeningServer() {
+
+        if(alreadyOpenedServer){
+            return;
+        }
+
+        server = new WSServer(new InetSocketAddress(25517), activity.getApplicationContext());
+
+        alreadyOpenedServer = true;
+
+        String STOREPASSWORD = "titancast-androidapp";
+        String KEYPASSWORD = STOREPASSWORD;
+
+        try {
+            KeyStore ks = KeyStore.getInstance("BKS");
+            ks.load(getAssets().open("keystore.jks"), STOREPASSWORD.toCharArray());
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+            kmf.init(ks, KEYPASSWORD.toCharArray());
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            tmf.init(ks);
+
+            SSLContext sslContext = null;
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+            wsf = new DefaultSSLWebSocketServerFactory(sslContext);
+
+            server.setWebSocketFactory(wsf);
+
+            server.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //error
+            fatalError(e);
+        }
+
     }
 
     public static void checkWifiStatus() {
@@ -89,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
+        extCacheDir = getExternalCacheDir();
 
         registerViews();
         setupViews();
@@ -96,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
         TitanCastNotification.setActivity(activity);
 
         checkWifiStatus();
-
-        server = new WSServer(new InetSocketAddress(25517), getApplicationContext());
-        server.start();
 
         intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.setPriority(100);
@@ -109,17 +161,20 @@ public class MainActivity extends AppCompatActivity {
 
         Details.setContext(this);
 
-        if(!checkedUpdate) {
+        if (!checkedUpdate) {
             checkForUpdate(false);
             checkedUpdate = true;
         }
 
         File f = new File(activity.getExternalCacheDir() + "titancast.apk");
 
-        if(f.exists()){
+        if (f.exists()) {
             f.delete();
             Log.d("titancast", "deleted previous app update file");
         }
+
+        tryOpeningServer();
+
     }
 
     @Override
@@ -155,6 +210,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void fatalError(Exception e){
+        unregisterReceiver(wFR);
+
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+
+        Intent myIntent = new Intent(this, ErrorStarting.class);
+        myIntent.putExtra("error", sw.toString());
+
+        startActivity(myIntent);
+        finish();
     }
 
 }
