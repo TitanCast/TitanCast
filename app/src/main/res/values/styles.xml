@@ -14,9 +14,9 @@
         <item name="android:windowActionBar">false</item>
     </style>
 
-    <style name="MyCustomTheme" parent="@style/Theme.AppCompat">
-        <item name="colorPrimary">#1093C7</item>
-        <item name="colorPrimaryDark">#0E80AD</item>
+    <style name="MyCustomTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimaryDark">#48617A</item>
+        <item name="colorPrimary">#506B87</item>
     </style>
 
     <style name="PermissionTheme" parent="MyCustomTheme">

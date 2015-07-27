@@ -41,6 +41,10 @@
             android:name=".UpdateActivity"
             android:label="@string/title_activity_update" >
         </activity>
+        <activity
+            android:name=".ErrorStarting"
+            android:label="@string/title_activity_error_starting" >
+        </activity>
     </application>
 
 </manifest>

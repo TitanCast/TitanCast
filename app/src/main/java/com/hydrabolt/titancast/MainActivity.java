@@ -15,15 +15,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
-import com.hydrabolt.titancast.secure.SSLGen;
 
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.security.KeyStore;
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     static boolean alreadyOpenedServer = false;
 
-    public static void tryOpeningServer() {
+    public void tryOpeningServer() {
 
         if(alreadyOpenedServer){
             return;
@@ -71,21 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
         alreadyOpenedServer = true;
 
-        File keystore = new File(extCacheDir, "keystore.jks");
-
-        if (!keystore.exists()) {
-            if (!SSLGen.generate("titancast-ssl", keystore, "titancast-androidapp")) {
-                //error it out here
-            }
-        }
-
         String STOREPASSWORD = "titancast-androidapp";
         String KEYPASSWORD = STOREPASSWORD;
 
         try {
             KeyStore ks = KeyStore.getInstance("BKS");
-            File kf = keystore;
-            ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+            ks.load(getAssets().open("keystore.jks"), STOREPASSWORD.toCharArray());
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
             kmf.init(ks, KEYPASSWORD.toCharArray());
@@ -106,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             //error
+            fatalError(e);
         }
 
     }
@@ -216,20 +208,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
-        if (id == R.id.menu_regen) {
-
-            File keystore = new File(extCacheDir, "keystore.jks");
-
-            if (SSLGen.generate("titancast-ssl", keystore, "titancast-androidapp")) {
-                TitanCastNotification.showToast("Success Regenerating", Toast.LENGTH_LONG);
-            }else{
-                TitanCastNotification.showToast("Failure Regenerating", Toast.LENGTH_LONG);
-            }
-
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void fatalError(Exception e){
+        unregisterReceiver(wFR);
+
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+
+        Intent myIntent = new Intent(this, ErrorStarting.class);
+        myIntent.putExtra("error", sw.toString());
+
+        startActivity(myIntent);
+        finish();
     }
 
 }
