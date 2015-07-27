@@ -14,6 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
@@ -31,7 +34,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     public static Activity activity;
     public static DefaultSSLWebSocketServerFactory wsf;
@@ -49,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
         status.setTypeface(Typeface.DEFAULT);
 
         if (state == 2) {
-            statusSubtitle.setText("connect to");
+            statusSubtitle.setText("ready");
             status.setText(FormattingTools.getIP(ip));
             status.setTypeface(Typeface.MONOSPACE);
 
         } else {
-            statusSubtitle.setText("uh-oh");
+            statusSubtitle.setText("not ready");
             status.setText("connect to wi-fi");
         }
     }
@@ -131,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
     private void registerViews() {
         statusSubtitle = (TextView) findViewById(R.id.statusSubtitle);
         status = (TextView) findViewById(R.id.status);
+
+        TextView version = (TextView) findViewById(R.id.versionText);
+        version.setText("v"+Details.getAppVersion());
     }
 
     private void setupViews() {
@@ -191,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

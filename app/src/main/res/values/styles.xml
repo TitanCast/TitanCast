@@ -15,8 +15,9 @@
     </style>
 
     <style name="MyCustomTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimaryDark">#48617A</item>
-        <item name="colorPrimary">#506B87</item>
+        <item name="colorPrimaryDark">#2980b9</item>
+        <item name="colorPrimary">#3498db</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="PermissionTheme" parent="MyCustomTheme">
@@ -49,5 +50,13 @@
 
     <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
     <style name="ButtonBarButton" />
+
+    <style name="ListView" parent="@android:style/Widget.ListView">
+        <item name="android:background">#ff0000</item>
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:listSelector">@drawable/list_item</item>
+    </style>
 
 </resources>

@@ -1,33 +1,139 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="64dp"
-    android:paddingBottom="64dp" tools:context=".MainActivity">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:padding="0dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="DETAIL_STATUS_SUBTITLE"
-        android:id="@+id/statusSubtitle"
+        android:padding="0dp"
+        android:id="@+id/linLay"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/status"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:textAllCaps="true"/>
+        android:weightSum="1">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="DETAIL_STATUS"
-        android:id="@+id/status"
-        android:layout_below="@+id/statusSubtitle"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:textAllCaps="true"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingTop="48dp"
+                android:paddingBottom="48dp"
+                android:paddingRight="24dp"
+                android:background="#3498db"
+                android:id="@+id/header"
+                android:translationZ="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="C0 A8 00 08"
+                    android:id="@+id/status"
+                    android:layout_below="@+id/statusSubtitle"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="34dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="DETAIL_STATUS_SUBTITLE"
+                    android:id="@+id/statusSubtitle"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textAllCaps="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="24dp"
+                    android:fontFamily="sans-serif-light" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="DETAIL_VERSION"
+                    android:id="@+id/versionText"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textAllCaps="false"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-thin"
+                    android:paddingTop="24dp" />
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/scrollView"
+                android:layout_gravity="center_horizontal"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="24dp">
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="GETTING STARTED"
+                        android:id="@+id/mB_getStarted"
+                        android:background="@drawable/blue_button"
+                        android:textColor="@drawable/button_col_blue"
+                        android:minLines="3"
+                        android:textSize="20sp"
+                        android:layout_marginBottom="@dimen/button_margin"
+                        android:translationZ="3dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CHECK FOR UPDATES"
+                        android:id="@+id/mB_checkUpdate"
+                        android:background="@drawable/blue_button"
+                        android:textColor="@drawable/button_col_blue"
+                        android:minLines="3"
+                        android:textSize="20sp"
+                        android:layout_marginBottom="@dimen/button_margin"
+                        android:layout_gravity="right"
+                        android:translationZ="3dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="SETTINGS"
+                        android:id="@+id/mB_settings"
+                        android:background="@drawable/blue_button"
+                        android:textColor="@drawable/button_col_blue"
+                        android:minLines="3"
+                        android:textSize="20sp"
+                        android:layout_marginBottom="@dimen/button_margin"
+                        android:translationZ="3dp" />
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </RelativeLayout>
