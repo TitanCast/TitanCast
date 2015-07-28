@@ -1,14 +1,17 @@
 package com.hydrabolt.titancast;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,19 +24,37 @@ import java.io.IOException;
 import java.net.URL;
 
 
-public class UpdateActivity extends ActionBarActivity {
+public class UpdateActivity extends Activity {
 
     public static boolean open = false;
+    public static String version = "";
+
+    private static String versionName, download, buildType;
+    private static int intVersion;
+
+    private static ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        open = true;
         setContentView(R.layout.activity_update);
+        open = true;
 
-        TextView view = (TextView) findViewById(R.id.updateText);
+        loading = (ProgressBar) findViewById(R.id.loadingStatus);
 
-        view.setText("An update to version " + getIntent().getStringExtra("version") + " is available. Please update by tapping the button below");
+        loading.setVisibility(View.GONE);
+
+        version = getIntent().getStringExtra("version");
+
+        TextView view = (TextView) findViewById(R.id.versionName);
+
+        versionName = getIntent().getStringExtra("version");
+        intVersion = getIntent().getIntExtra("intVersion", 0);
+        download = getIntent().getStringExtra("download");
+        buildType = getIntent().getStringExtra("buildType");
+
+
+        view.setText(versionName);
 
     }
 
@@ -42,30 +63,32 @@ public class UpdateActivity extends ActionBarActivity {
         return true;
     }
 
-    public void startDownload(View view){
+    public void startDownload(View view) {
 
         Button b = (Button) findViewById(R.id.updateButton);
         b.setEnabled(false);
         b.setText("PLEASE WAIT...");
+        loading.setVisibility(View.VISIBLE);
 
-            try {
+        try {
 
-            Thread thread = new Thread(new Runnable(){
+            Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+
                     File file;
                     file = new File(getExternalCacheDir(), "titancast.apk");
 
                     try {
-                        FileUtils.copyURLToFile(new URL("http://titancast.github.io/download/v/titancast.0.0.2.apk"), file);
+                        FileUtils.copyURLToFile(new URL(download), file);
                     } catch (IOException e) {
                         TitanCastNotification.showToast("Error Updating, visit site and manually update.", Toast.LENGTH_LONG);
-                        Log.d("titancast-update", "error - "+e.getLocalizedMessage());
+                        e.printStackTrace();
                         finish();
                     }
 
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType( Uri.fromFile(file) , "application/vnd.android.package-archive");
+                    intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
@@ -74,7 +97,8 @@ public class UpdateActivity extends ActionBarActivity {
 
             thread.start();
 
-        } catch ( Exception e ) {
+        } catch (Exception e) {
+            e.printStackTrace();
             TitanCastNotification.showToast("Error Updating, visit site and manually update.", Toast.LENGTH_LONG);
             finish();
         }
@@ -82,7 +106,7 @@ public class UpdateActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onStop () {
+    public void onStop() {
         super.onStop();
         open = false;
     }

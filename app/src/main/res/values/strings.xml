@@ -11,4 +11,5 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_cast">Cast Activity</string>
     <string name="title_activity_update">Update Available</string>
+    <string name="title_activity_error_starting">Unexpected Error</string>
 </resources>

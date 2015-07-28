@@ -71,7 +71,7 @@ public class WSServer extends WebSocketServer {
     public static void rejectRequest(int index) {
         try {
             socketList.get(index).send(PacketSerializer.generatePacket("reject_connect_request", empty));
-            socketList.get(index).close(0);
+            socketList.get(index).close(0, "rejected");
         }catch(IndexOutOfBoundsException e){
             TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
         }
@@ -85,7 +85,7 @@ public class WSServer extends WebSocketServer {
             socketList.get(index).send(PacketSerializer.generatePacket("accept_connect_request", empty));
             Details.setConnected(true);
             acceptedWebSocket = socketList.get(index);
-        }catch(IndexOutOfBoundsException e){
+        }catch(Exception e){
             Log.d("titancast-wsserver", "error - "+e.getLocalizedMessage());
             TitanCastNotification.showToast("You were disconnected from the application!", Toast.LENGTH_LONG);
         }
@@ -93,7 +93,7 @@ public class WSServer extends WebSocketServer {
 
     public static void terminateActive() {
         if(acceptedWebSocket != null){
-            acceptedWebSocket.close(0);
+            acceptedWebSocket.closeConnection(0, "terminated");
             acceptedWebSocket = null;
             Details.setConnected(false);
             Details.setHasViewData(false);
@@ -119,12 +119,14 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
 
-        if (socketList.size() > 10) {
-            webSocket.close(0);
+        if (socketList.size() > 4) {
+            webSocket.close();
+            return;
         }
 
         webSocket.send(deviceDetails);
         socketList.add(webSocket);
+
     }
 
     @Override
@@ -252,7 +254,17 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket webSocket, Exception e) {
-        Log.d("titancast-wsserver", "error - "+e.getLocalizedMessage());
+
+        e.printStackTrace();
+
+        if(webSocket != null){
+            socketList.remove(webSocket);
+            if (webSocket == acceptedWebSocket) {
+                terminateActive();
+                CastActivity.close();
+            }
+            webSocket.closeConnection(0, "error - " + e.getLocalizedMessage());
+        }
     }
 
     public void end(){

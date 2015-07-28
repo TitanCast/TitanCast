@@ -28,8 +28,7 @@
         </activity>
         <activity
             android:name=".RequestConnectScreen"
-            android:label="@string/title_activity_request_connect_screen"
-            android:theme="@style/PermissionTheme" >
+            android:label="@string/title_activity_request_connect_screen">
         </activity>
         <activity
             android:name=".CastActivity"
@@ -40,6 +39,10 @@
         <activity
             android:name=".UpdateActivity"
             android:label="@string/title_activity_update" >
+        </activity>
+        <activity
+            android:name=".ErrorStarting"
+            android:label="@string/title_activity_error_starting" >
         </activity>
     </application>
 
