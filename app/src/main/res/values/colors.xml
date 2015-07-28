@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="button_blue">#34495e</color>
-    <color name="button_green">#ff26aa79</color>
-    <color name="button_red">#ffc01f22</color>
+    <color name="button_blue">#3498db</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>

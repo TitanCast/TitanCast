@@ -67,7 +67,6 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="DETAIL_VERSION"
                     android:id="@+id/versionText"
-                    android:gravity="center_vertical|center_horizontal"
                     android:textAllCaps="false"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true"
@@ -96,37 +95,53 @@
                         android:layout_height="wrap_content"
                         android:text="GETTING STARTED"
                         android:id="@+id/mB_getStarted"
-                        android:background="@drawable/blue_button"
-                        android:textColor="@drawable/button_col_blue"
+                        android:background="@drawable/white_button"
+                        android:textColor="@drawable/button_col_white"
                         android:minLines="3"
                         android:textSize="20sp"
                         android:layout_marginBottom="@dimen/button_margin"
-                        android:translationZ="3dp" />
+                        android:translationZ="3dp"
+                        android:onClick="btnGetStarted"/>
 
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="CHECK FOR UPDATES"
                         android:id="@+id/mB_checkUpdate"
-                        android:background="@drawable/blue_button"
-                        android:textColor="@drawable/button_col_blue"
+                        android:background="@drawable/white_button"
+                        android:textColor="@drawable/button_col_white"
                         android:minLines="3"
                         android:textSize="20sp"
                         android:layout_marginBottom="@dimen/button_margin"
                         android:layout_gravity="right"
-                        android:translationZ="3dp" />
+                        android:translationZ="3dp"
+                        android:onClick="btnCheckUpdates"/>
 
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="SETTINGS"
                         android:id="@+id/mB_settings"
-                        android:background="@drawable/blue_button"
-                        android:textColor="@drawable/button_col_blue"
+                        android:background="@drawable/white_button"
+                        android:textColor="@drawable/button_col_white"
                         android:minLines="3"
                         android:textSize="20sp"
                         android:layout_marginBottom="@dimen/button_margin"
-                        android:translationZ="3dp" />
+                        android:translationZ="3dp"
+                        android:onClick="btnSettings" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Website"
+                        android:id="@+id/mB_website"
+                        android:background="@drawable/white_button"
+                        android:textColor="@drawable/button_col_white"
+                        android:minLines="3"
+                        android:textSize="20sp"
+                        android:layout_marginBottom="@dimen/button_margin"
+                        android:translationZ="3dp"
+                        android:onClick="btnWebsite" />
 
                 </LinearLayout>
             </ScrollView>

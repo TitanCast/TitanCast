@@ -5,79 +5,97 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.hydrabolt.titancast.RequestConnectScreen"
-    android:padding="0dp"
-    android:background="#072530">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:weightSum="2"
-        android:id="@+id/buttons"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="CONNECT"
-            android:id="@+id/acceptButton"
-            android:layout_weight="1"
-            android:background="#ff3fa2b1"
-            android:onClick="acceptClicked"
-            android:layout_marginRight="1dp"
-            android:padding="4dp" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="IGNORE"
-            android:id="@+id/ignoreButton"
-            android:layout_weight="1"
-            android:background="#ff3fa2b1"
-            android:onClick="ignoreClicked"
-            android:layout_marginLeft="1dp"
-            android:padding="4dp"
-            android:layout_gravity="right" />
-
-    </LinearLayout>
+    android:padding="0dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
-        android:layout_above="@+id/buttons">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/layout">
+            android:layout_height="160dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#3498db">
 
-            <ImageView
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:maxWidth="48dp"
-                android:maxHeight="48dp"
-                android:id="@+id/appIcon"
-                android:layout_gravity="center_horizontal" />
-
-            <TextView
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="APP NAME"
-                android:id="@+id/appName"
-                android:textSize="18dp"
-                android:layout_below="@+id/updateText"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_vertical|center_horizontal" />
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:translationZ="5dp"
+                android:elevation="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="TitanCast"
+                    android:id="@+id/appName"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="24dp"
+                    android:layout_marginBottom="32dp"
+                    android:textAllCaps="true"
+                    android:fontFamily="sans-serif-light" />
+            </FrameLayout>
         </LinearLayout>
 
+        <FrameLayout
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-64dp"
+            android:translationZ="10dp"
+            android:elevation="10dp"
+            android:outlineProvider="bounds">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/appIcon"
+                android:layout_gravity="center_horizontal"
+                android:outlineProvider="bounds"/>
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="This is an app desc"
+            android:id="@+id/appDesc"
+            android:minLines="6"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="32dp"
+            android:layout_marginBottom="96dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:paddingBottom="32dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:weightSum="2">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="CONNECT"
+            android:id="@+id/button"
+            android:background="@drawable/blue_button"
+            android:layout_margin="8dp"
+            android:enabled="true"
+            android:textSize="24dp"
+            android:onClick="acceptClicked"
+            android:textColor="@drawable/button_col_blue" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -17,7 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:background = "@drawable/blue_button"
-        android:textColor="@android:color/white"
+        android:textColor="@drawable/button_col_blue"
         android:textSize="19dp"
         android:textStyle="bold" />
 
@@ -27,28 +27,54 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|top"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/updateButton">
+        android:layout_above="@+id/updateButton"
+        android:paddingTop="64dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="An important update is available"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal|top"
+            android:textAllCaps="true"
+            android:gravity="center_horizontal"
+            android:textSize="24sp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textIsSelectable="false"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="0.0.5"
+            android:id="@+id/versionName"
+            android:layout_gravity="center_horizontal"
+            android:textAllCaps="true"
+            android:gravity="center_horizontal"
+            android:textSize="32sp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textIsSelectable="false"
+            android:fontFamily="sans-serif"
+            android:layout_marginTop="32dp"
+            android:textStyle="bold" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal">
 
-            <TextView
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="0.0.7"
-                android:id="@+id/versionName"
+                android:id="@+id/loadingStatus"
                 android:layout_gravity="center"
-                android:textSize="34dp"
-                android:typeface="normal"
-                android:textStyle="bold"
-                android:padding="12dp"
-                android:paddingLeft="24dp"
-                android:paddingRight="24dp"
-                android:textColor="#4178B0"
-                android:translationZ="0dp" />
+                android:indeterminate="true" />
         </FrameLayout>
     </LinearLayout>
 

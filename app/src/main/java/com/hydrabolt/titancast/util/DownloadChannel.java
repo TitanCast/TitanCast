@@ -5,7 +5,7 @@ package com.hydrabolt.titancast.util;
  */
 public class DownloadChannel {
 
-    public static String STABLE = "";
+    public static String MAJOR = "";
     public static String BETA = "beta";
     public static String DEVELOPMENT = "development";
 

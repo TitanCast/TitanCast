@@ -14,10 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hydrabolt.titancast.info_display.TitanCastNotification;
 
@@ -136,7 +138,10 @@ public class MainActivity extends Activity {
         status = (TextView) findViewById(R.id.status);
 
         TextView version = (TextView) findViewById(R.id.versionText);
-        version.setText("v"+Details.getAppVersion());
+
+        String extra = BuildConfig.DEBUG ? "\nDEVELOPER EDITION" : "";
+
+        version.setText("v" + Details.getAppVersion() + "\nBuild "+ Details.getAppVersionInt() + extra);
     }
 
     private void setupViews() {
@@ -229,6 +234,29 @@ public class MainActivity extends Activity {
 
         startActivity(myIntent);
         finish();
+    }
+
+    public void btnGetStarted(View v){
+
+        TitanCastNotification.showToast("Not yet implemented", Toast.LENGTH_LONG);
+
+    }
+
+    public void btnCheckUpdates(View v){
+
+        checkForUpdate(true);
+
+    }
+
+    public void btnSettings(View v){
+
+        TitanCastNotification.showToast("Not yet implemented", Toast.LENGTH_LONG);
+
+    }
+
+    public void btnWebsite(View v){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://titancast.github.io/"));
+        startActivity(intent);
     }
 
 }

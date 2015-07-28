@@ -13,7 +13,7 @@ public class Details {
     private static final String APP_VERSION = BuildConfig.VERSION_NAME;
     private static final int INT_APP_VERSION = BuildConfig.VERSION_CODE;
 
-    private static String downloadChannel = DownloadChannel.STABLE;
+    private static String downloadChannel = DownloadChannel.MAJOR;
 
     private static boolean connected = false, hasViewData = false;
     private static Activity activity;
