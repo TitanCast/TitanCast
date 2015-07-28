@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 
 
-public class UpdateActivity extends AppCompatActivity {
+public class UpdateActivity extends Activity {
 
     public static boolean open = false;
     public static String version = "";
@@ -31,14 +32,19 @@ public class UpdateActivity extends AppCompatActivity {
     private static String versionName, download, buildType;
     private static int intVersion;
 
+    private static ProgressBar loading;
+
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        setContentView(R.layout.activity_update);
         open = true;
 
-        version = getIntent().getStringExtra("version");
+        loading = (ProgressBar) findViewById(R.id.loadingStatus);
 
-        setContentView(R.layout.activity_update);
+        loading.setVisibility(View.GONE);
+
+        version = getIntent().getStringExtra("version");
 
         TextView view = (TextView) findViewById(R.id.versionName);
 
@@ -62,6 +68,7 @@ public class UpdateActivity extends AppCompatActivity {
         Button b = (Button) findViewById(R.id.updateButton);
         b.setEnabled(false);
         b.setText("PLEASE WAIT...");
+        loading.setVisibility(View.VISIBLE);
 
         try {
 

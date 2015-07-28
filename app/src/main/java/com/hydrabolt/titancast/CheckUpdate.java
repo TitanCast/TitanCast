@@ -38,7 +38,7 @@ public class CheckUpdate implements Runnable {
 
         try {
 
-            InputStream in = new URL("http://192.168.0.9:4000/download/getlatest" + Details.getDownloadChannel() + ".html").openStream();
+            InputStream in = new URL("http://titancast.github.io/download/getlatest" + Details.getDownloadChannel() + ".html").openStream();
 
             try {
                 String lines[] = IOUtils.toString(in).split("\\r?\\n");
@@ -65,7 +65,7 @@ public class CheckUpdate implements Runnable {
             } catch (Exception e) {
                 if (override) {
                     TitanCastNotification.showToast("Error fetching update list", Toast.LENGTH_LONG);
-                    Log.d("titancast", e.getLocalizedMessage());
+                    e.printStackTrace();
                 }
             } finally {
                 IOUtils.closeQuietly(in);
@@ -74,6 +74,7 @@ public class CheckUpdate implements Runnable {
         } catch (IOException e) {
             //nope
             TitanCastNotification.showToast("Error fetching update list", Toast.LENGTH_LONG);
+            e.printStackTrace();
         }
 
     }

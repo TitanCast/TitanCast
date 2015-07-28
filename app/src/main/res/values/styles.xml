@@ -1,9 +1,4 @@
-<resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-    </style>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:background"  ignore="NewApi">@android:color/holo_blue_bright</item>
@@ -15,39 +10,16 @@
     </style>
 
     <style name="MyCustomTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimaryDark">#48617A</item>
-        <item name="colorPrimary">#506B87</item>
+        <item name="colorPrimaryDark">#2980b9</item>
+        <item name="colorPrimary">#3498db</item>
     </style>
 
-    <style name="PermissionTheme" parent="MyCustomTheme">
-        <item name="colorPrimary">#0C3747</item>
-        <item name="colorPrimaryDark">#0B2C38</item>
+    <style name="ListView" parent="@android:style/Widget.ListView">
+        <item name="android:background">#ff0000</item>
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:listSelector">@drawable/list_item</item>
     </style>
-
-    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
-
-    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">@style/ButtonBar</item>
-        <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
-    </style>
-
-    <!-- Backward-compatible version of ?android:attr/buttonBarStyle -->
-    <style name="ButtonBar">
-        <item name="android:paddingLeft">2dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingRight">2dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:background">@android:drawable/bottom_bar</item>
-    </style>
-
-    <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
-    <style name="ButtonBarButton" />
 
 </resources>

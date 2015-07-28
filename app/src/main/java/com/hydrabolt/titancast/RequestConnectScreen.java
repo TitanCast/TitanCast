@@ -1,5 +1,6 @@
 package com.hydrabolt.titancast;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.opengl.Visibility;
@@ -21,10 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 
-public class RequestConnectScreen extends AppCompatActivity {
+public class RequestConnectScreen extends Activity {
 
     int index = 0;
-    private TextView appName;
+    private TextView appName, appDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class RequestConnectScreen extends AppCompatActivity {
             finish();
 
         appName = (TextView) findViewById(R.id.appName);
+        appDesc = (TextView) findViewById(R.id.appDesc);
 
         setTitle("Casting Permission");
 
@@ -51,12 +53,10 @@ public class RequestConnectScreen extends AppCompatActivity {
 
                 InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
                 cimg.setImageBitmap(BitmapFactory.decodeStream(stream));
-                cimg.setMaxWidth(32);
-                cimg.setMaxHeight(32);
             }catch(Exception e){
-                cimg.setVisibility(View.GONE);
+                cimg.setImageResource(R.mipmap.ic_launcher);
                 TitanCastNotification.showToast("Error Loading App Icon", Toast.LENGTH_LONG);
-                Log.d("titancastrequest", "Error - " + e.getLocalizedMessage());
+                e.printStackTrace();
             }
         }else{
             cimg.setVisibility(View.GONE);
@@ -65,6 +65,7 @@ public class RequestConnectScreen extends AppCompatActivity {
         index = i.getIntExtra("client_id", 0);
 
         this.appName.setText(appName);
+        this.appDesc.setText(appDesc);
     }
 
 
