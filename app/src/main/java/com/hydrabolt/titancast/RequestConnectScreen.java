@@ -59,7 +59,7 @@ public class RequestConnectScreen extends Activity {
                 e.printStackTrace();
             }
         }else{
-            cimg.setVisibility(View.GONE);
+            cimg.setImageResource(R.mipmap.ic_launcher);
         }
 
         index = i.getIntExtra("client_id", 0);
